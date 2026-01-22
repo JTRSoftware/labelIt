@@ -1,0 +1,1178 @@
+object fDadosExternos: TfDadosExternos
+  Left = 417
+  Height = 800
+  Top = 160
+  Width = 1024
+  BorderStyle = bsToolWindow
+  Caption = 'Dados externos'
+  ClientHeight = 800
+  ClientWidth = 1024
+  Font.Height = -16
+  ShowHint = True
+  LCLVersion = '4.4.0.0'
+  OnCreate = FormCreate
+  OnShow = FormShow
+  object pcDadosExternos: TPageControl
+    Left = 4
+    Height = 792
+    Top = 4
+    Width = 1016
+    ActivePage = tsSQLQuery
+    Align = alClient
+    BorderSpacing.Around = 4
+    TabIndex = 5
+    TabOrder = 0
+    object tsOrigemDados: TTabSheet
+      Caption = 'Origem de dados'
+      ClientHeight = 758
+      ClientWidth = 1008
+      object rgOrigemDados: TRadioGroup
+        Left = 4
+        Height = 664
+        Top = 45
+        Width = 1000
+        Align = alClient
+        AutoFill = True
+        BorderSpacing.Around = 4
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 1
+        ClientHeight = 638
+        ClientWidth = 996
+        ItemIndex = 0
+        Items.Strings = (
+          'Folha de cálculo'
+          'SQLite'
+          'Ligação servidor de base de dados'
+          'Nenhuma'
+        )
+        TabOrder = 0
+      end
+      object podNavegador: TPanel
+        Left = 4
+        Height = 41
+        Top = 713
+        Width = 1000
+        Align = alBottom
+        AutoSize = True
+        BorderSpacing.Around = 4
+        ClientHeight = 41
+        ClientWidth = 1000
+        TabOrder = 1
+        object bodSeguinte: TButton
+          Left = 890
+          Height = 31
+          Top = 5
+          Width = 105
+          Align = alRight
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = 'Seguinte ▶️'
+          TabOrder = 0
+          OnClick = bodSeguinteClick
+        end
+      end
+      object lodTitulo: TLabel
+        Left = 4
+        Height = 37
+        Top = 4
+        Width = 1000
+        Align = alTop
+        BorderSpacing.Around = 4
+        Caption = 'Origem de dados'
+        Font.Height = -27
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+    end
+    object tsFolhaCalculo: TTabSheet
+      Caption = 'Folha de cálculo'
+      ClientHeight = 758
+      ClientWidth = 1008
+      object lfcFicheiro: TLabel
+        Left = 32
+        Height = 21
+        Top = 73
+        Width = 944
+        Align = alTop
+        BorderSpacing.Bottom = -32
+        BorderSpacing.Around = 32
+        Caption = 'Ficheiro:'
+      end
+      object pfcNavegador: TPanel
+        Left = 4
+        Height = 41
+        Top = 713
+        Width = 1000
+        Align = alBottom
+        AutoSize = True
+        BorderSpacing.Around = 4
+        ClientHeight = 41
+        ClientWidth = 1000
+        TabOrder = 0
+        object bfcAnterior: TButton
+          Left = 5
+          Height = 31
+          Top = 5
+          Width = 101
+          Align = alLeft
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = '◀️ Anterior'
+          TabOrder = 0
+          OnClick = bfcAnteriorClick
+        end
+        object bfcSeguinte: TButton
+          Left = 890
+          Height = 31
+          Top = 5
+          Width = 105
+          Align = alRight
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = 'Seguinte ▶️'
+          TabOrder = 1
+          OnClick = bfcSeguinteClick
+        end
+      end
+      object efcFicheiro: TEdit
+        Left = 32
+        Height = 35
+        Top = 94
+        Width = 944
+        Align = alTop
+        BorderSpacing.Top = -32
+        BorderSpacing.Around = 32
+        TabOrder = 1
+        object bfoAbrir: TButton
+          Left = 905
+          Height = 31
+          Hint = 'Procurar ficheiro'
+          Top = 0
+          Width = 35
+          Align = alRight
+          AutoSize = True
+          Caption = '...'
+          TabOrder = 0
+          OnClick = bfoAbrirClick
+        end
+      end
+      object lfcTitulo: TLabel
+        Left = 4
+        Height = 37
+        Top = 4
+        Width = 1000
+        Align = alTop
+        BorderSpacing.Around = 4
+        Caption = 'Origem de dados > Folha de cálculo'
+        Font.Height = -27
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+    end
+    object tsPagina: TTabSheet
+      Caption = 'Página'
+      ClientHeight = 758
+      ClientWidth = 1008
+      object lpgTitulo: TLabel
+        Left = 4
+        Height = 37
+        Top = 4
+        Width = 1000
+        Align = alTop
+        BorderSpacing.Around = 4
+        Caption = '.. > Folha de cálculo > Página'
+        Font.Height = -27
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object lbpgPaginas: TListBox
+        Left = 4
+        Height = 664
+        Top = 45
+        Width = 1000
+        Align = alClient
+        BorderSpacing.Around = 4
+        ItemHeight = 0
+        TabOrder = 0
+      end
+      object pfcNavegador1: TPanel
+        Left = 4
+        Height = 41
+        Top = 713
+        Width = 1000
+        Align = alBottom
+        AutoSize = True
+        BorderSpacing.Around = 4
+        ClientHeight = 41
+        ClientWidth = 1000
+        TabOrder = 1
+        object bpgAnterior: TButton
+          Left = 5
+          Height = 31
+          Top = 5
+          Width = 101
+          Align = alLeft
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = '◀️ Anterior'
+          TabOrder = 0
+          OnClick = bpgAnteriorClick
+        end
+        object bfcConcluir1: TButton
+          Left = 911
+          Height = 31
+          Top = 5
+          Width = 84
+          Align = alRight
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = 'Concluir'
+          TabOrder = 1
+          OnClick = bfcConcluir1Click
+        end
+      end
+    end
+    object tsSQLite: TTabSheet
+      Caption = 'SQLite'
+      ClientHeight = 758
+      ClientWidth = 1008
+      object lliteTitulo: TLabel
+        Left = 4
+        Height = 37
+        Top = 4
+        Width = 1000
+        Align = alTop
+        BorderSpacing.Around = 4
+        Caption = 'Origem de dados > SQLite'
+        Font.Height = -27
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object lliteFicheiro: TLabel
+        Left = 32
+        Height = 21
+        Top = 73
+        Width = 944
+        Align = alTop
+        BorderSpacing.Bottom = -32
+        BorderSpacing.Around = 32
+        Caption = 'Ficheiro:'
+      end
+      object eliteFicheiro: TEdit
+        Left = 32
+        Height = 35
+        Top = 94
+        Width = 944
+        Align = alTop
+        BorderSpacing.Top = -32
+        BorderSpacing.Around = 32
+        TabOrder = 0
+        object bfoAbrir1: TButton
+          Left = 905
+          Height = 31
+          Hint = 'Procurar ficheiro'
+          Top = 0
+          Width = 35
+          Align = alRight
+          AutoSize = True
+          Caption = '...'
+          TabOrder = 0
+          OnClick = bfoAbrir1Click
+        end
+      end
+      object pliteNavegador: TPanel
+        Left = 4
+        Height = 41
+        Top = 713
+        Width = 1000
+        Align = alBottom
+        AutoSize = True
+        BorderSpacing.Around = 4
+        ClientHeight = 41
+        ClientWidth = 1000
+        TabOrder = 1
+        object bliteAnterior: TButton
+          Left = 5
+          Height = 31
+          Top = 5
+          Width = 101
+          Align = alLeft
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = '◀️ Anterior'
+          TabOrder = 0
+          OnClick = bliteAnteriorClick
+        end
+        object bliteSeguinte: TButton
+          Left = 890
+          Height = 31
+          Top = 5
+          Width = 105
+          Align = alRight
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = 'Seguinte ▶️'
+          TabOrder = 1
+          OnClick = bliteSeguinteClick
+        end
+      end
+    end
+    object tsSQLServer: TTabSheet
+      Caption = 'Servidor SQL'
+      ClientHeight = 758
+      ClientWidth = 1008
+      object lsqlTitulo: TLabel
+        Left = 4
+        Height = 37
+        Top = 4
+        Width = 1000
+        Align = alTop
+        BorderSpacing.Around = 4
+        Caption = 'Origem de dados > Ligação servidor de base de dados'
+        Font.Height = -27
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object psqlNavegador: TPanel
+        Left = 4
+        Height = 41
+        Top = 713
+        Width = 1000
+        Align = alBottom
+        AutoSize = True
+        BorderSpacing.Around = 4
+        ClientHeight = 41
+        ClientWidth = 1000
+        TabOrder = 0
+        object bsqlAnterior: TButton
+          Left = 5
+          Height = 31
+          Top = 5
+          Width = 101
+          Align = alLeft
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = '◀️ Anterior'
+          TabOrder = 0
+          OnClick = bsqlAnteriorClick
+        end
+        object bsqlSeguinte: TButton
+          Left = 890
+          Height = 31
+          Top = 5
+          Width = 105
+          Align = alRight
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = 'Seguinte ▶️'
+          TabOrder = 1
+          OnClick = bsqlSeguinteClick
+        end
+        object bsqlTest: TButton
+          Left = 765
+          Height = 31
+          Top = 5
+          Width = 121
+          Align = alRight
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = 'Testar ligação'
+          TabOrder = 2
+          OnClick = bsqlTestClick
+        end
+      end
+      object rgsqlTipo: TRadioGroup
+        Left = 4
+        Height = 67
+        Top = 45
+        Width = 1000
+        Align = alTop
+        AutoFill = True
+        BorderSpacing.Around = 4
+        Caption = 'SGBD (sistema gestor de bases de dados)'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 41
+        ClientWidth = 996
+        Columns = 2
+        ItemIndex = 0
+        Items.Strings = (
+          'Microsoft SQL Server'
+          'MySQL \ MariaDB'
+        )
+        TabOrder = 1
+        OnClick = rgsqlTipoClick
+      end
+      object gbsqlConfig: TGroupBox
+        Left = 4
+        Height = 593
+        Top = 116
+        Width = 1000
+        Align = alClient
+        BorderSpacing.Around = 4
+        Caption = 'Configuração'
+        ClientHeight = 567
+        ClientWidth = 996
+        TabOrder = 2
+        object sgsqlProperties: TStringGrid
+          Left = 0
+          Height = 379
+          Top = 0
+          Width = 996
+          Align = alClient
+          ColCount = 2
+          DefaultColWidth = 90
+          FixedCols = 0
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goSmoothScroll]
+          RowCount = 1
+          TabOrder = 0
+          OnResize = sgsqlPropertiesResize
+          OnSelectEditor = sgsqlPropertiesSelectEditor
+        end
+        object lsqlOutrosParams: TLabel
+          Left = 4
+          Height = 21
+          Top = 383
+          Width = 988
+          Align = alBottom
+          BorderSpacing.Around = 4
+          Caption = 'Outros parâmetros:'
+        end
+        object msqlOutrosParams: TMemo
+          Left = 0
+          Height = 159
+          Top = 408
+          Width = 996
+          Align = alBottom
+          TabOrder = 1
+        end
+      end
+    end
+    object tsSQLQuery: TTabSheet
+      Caption = 'Query'
+      ClientHeight = 758
+      ClientWidth = 1008
+      OnShow = tsSQLQueryShow
+      object lqueryTitulo: TLabel
+        Left = 4
+        Height = 37
+        Top = 4
+        Width = 1000
+        Align = alTop
+        BorderSpacing.Around = 4
+        Caption = '... > Ligação servidor de base de dados > Query'
+        Font.Height = -27
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object pliteNavegador1: TPanel
+        Left = 4
+        Height = 41
+        Top = 713
+        Width = 1000
+        Align = alBottom
+        AutoSize = True
+        BorderSpacing.Around = 4
+        ClientHeight = 41
+        ClientWidth = 1000
+        TabOrder = 0
+        object bqueryAnterior: TButton
+          Left = 5
+          Height = 31
+          Top = 5
+          Width = 101
+          Align = alLeft
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = '◀️ Anterior'
+          TabOrder = 0
+          OnClick = bqueryAnteriorClick
+        end
+        object bqueryConcluir: TButton
+          Left = 911
+          Height = 31
+          Top = 5
+          Width = 84
+          Align = alRight
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = 'Concluir'
+          TabOrder = 1
+          OnClick = bqueryConcluirClick
+        end
+        object bqueryTest: TButton
+          Left = 777
+          Height = 31
+          Top = 5
+          Width = 130
+          Align = alRight
+          AutoSize = True
+          BorderSpacing.Around = 4
+          Caption = 'Testar consulta'
+          TabOrder = 2
+          OnClick = bqueryTestClick
+        end
+      end
+      inline seQuery: TSynEdit
+        Left = 4
+        Height = 664
+        Top = 45
+        Width = 1000
+        Align = alClient
+        BorderSpacing.Around = 4
+        Font.Color = clBlack
+        Font.Height = -13
+        Font.Name = 'Courier New'
+        Font.Pitch = fpFixed
+        Font.Quality = fqNonAntialiased
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 1
+        Gutter.Color = clWhite
+        Gutter.CurrentLineColor.Background = clSilver
+        Gutter.Width = 57
+        Gutter.MouseActions = <>
+        RightGutter.Width = 0
+        RightGutter.MouseActions = <>
+        Highlighter = SynSQL
+        Keystrokes = <        
+          item
+            Command = ecUp
+            ShortCut = 38
+          end        
+          item
+            Command = ecSelUp
+            ShortCut = 8230
+          end        
+          item
+            Command = ecScrollUp
+            ShortCut = 16422
+          end        
+          item
+            Command = ecDown
+            ShortCut = 40
+          end        
+          item
+            Command = ecSelDown
+            ShortCut = 8232
+          end        
+          item
+            Command = ecScrollDown
+            ShortCut = 16424
+          end        
+          item
+            Command = ecLeft
+            ShortCut = 37
+          end        
+          item
+            Command = ecSelLeft
+            ShortCut = 8229
+          end        
+          item
+            Command = ecWordLeft
+            ShortCut = 16421
+          end        
+          item
+            Command = ecSelWordLeft
+            ShortCut = 24613
+          end        
+          item
+            Command = ecRight
+            ShortCut = 39
+          end        
+          item
+            Command = ecSelRight
+            ShortCut = 8231
+          end        
+          item
+            Command = ecWordRight
+            ShortCut = 16423
+          end        
+          item
+            Command = ecSelWordRight
+            ShortCut = 24615
+          end        
+          item
+            Command = ecPageDown
+            ShortCut = 34
+          end        
+          item
+            Command = ecSelPageDown
+            ShortCut = 8226
+          end        
+          item
+            Command = ecPageBottom
+            ShortCut = 16418
+          end        
+          item
+            Command = ecSelPageBottom
+            ShortCut = 24610
+          end        
+          item
+            Command = ecPageUp
+            ShortCut = 33
+          end        
+          item
+            Command = ecSelPageUp
+            ShortCut = 8225
+          end        
+          item
+            Command = ecPageTop
+            ShortCut = 16417
+          end        
+          item
+            Command = ecSelPageTop
+            ShortCut = 24609
+          end        
+          item
+            Command = ecLineStart
+            ShortCut = 36
+          end        
+          item
+            Command = ecSelLineStart
+            ShortCut = 8228
+          end        
+          item
+            Command = ecEditorTop
+            ShortCut = 16420
+          end        
+          item
+            Command = ecSelEditorTop
+            ShortCut = 24612
+          end        
+          item
+            Command = ecLineEnd
+            ShortCut = 35
+          end        
+          item
+            Command = ecSelLineEnd
+            ShortCut = 8227
+          end        
+          item
+            Command = ecEditorBottom
+            ShortCut = 16419
+          end        
+          item
+            Command = ecSelEditorBottom
+            ShortCut = 24611
+          end        
+          item
+            Command = ecToggleMode
+            ShortCut = 45
+          end        
+          item
+            Command = ecCopy
+            ShortCut = 16429
+          end        
+          item
+            Command = ecPaste
+            ShortCut = 8237
+          end        
+          item
+            Command = ecDeleteChar
+            ShortCut = 46
+          end        
+          item
+            Command = ecCut
+            ShortCut = 8238
+          end        
+          item
+            Command = ecDeleteLastChar
+            ShortCut = 8
+          end        
+          item
+            Command = ecDeleteLastChar
+            ShortCut = 8200
+          end        
+          item
+            Command = ecDeleteLastWord
+            ShortCut = 16392
+          end        
+          item
+            Command = ecUndo
+            ShortCut = 32776
+          end        
+          item
+            Command = ecRedo
+            ShortCut = 40968
+          end        
+          item
+            Command = ecLineBreak
+            ShortCut = 13
+          end        
+          item
+            Command = ecSelectAll
+            ShortCut = 16449
+          end        
+          item
+            Command = ecCopy
+            ShortCut = 16451
+          end        
+          item
+            Command = ecBlockIndent
+            ShortCut = 16457
+          end        
+          item
+            Command = ecLineBreak
+            ShortCut = 16461
+          end        
+          item
+            Command = ecInsertLine
+            ShortCut = 16462
+          end        
+          item
+            Command = ecDeleteWord
+            ShortCut = 16468
+          end        
+          item
+            Command = ecBlockUnindent
+            ShortCut = 16469
+          end        
+          item
+            Command = ecPaste
+            ShortCut = 16470
+          end        
+          item
+            Command = ecCut
+            ShortCut = 16472
+          end        
+          item
+            Command = ecDeleteLine
+            ShortCut = 16473
+          end        
+          item
+            Command = ecDeleteEOL
+            ShortCut = 24665
+          end        
+          item
+            Command = ecUndo
+            ShortCut = 16474
+          end        
+          item
+            Command = ecRedo
+            ShortCut = 24666
+          end        
+          item
+            Command = ecGotoMarker0
+            ShortCut = 16432
+          end        
+          item
+            Command = ecGotoMarker1
+            ShortCut = 16433
+          end        
+          item
+            Command = ecGotoMarker2
+            ShortCut = 16434
+          end        
+          item
+            Command = ecGotoMarker3
+            ShortCut = 16435
+          end        
+          item
+            Command = ecGotoMarker4
+            ShortCut = 16436
+          end        
+          item
+            Command = ecGotoMarker5
+            ShortCut = 16437
+          end        
+          item
+            Command = ecGotoMarker6
+            ShortCut = 16438
+          end        
+          item
+            Command = ecGotoMarker7
+            ShortCut = 16439
+          end        
+          item
+            Command = ecGotoMarker8
+            ShortCut = 16440
+          end        
+          item
+            Command = ecGotoMarker9
+            ShortCut = 16441
+          end        
+          item
+            Command = ecSetMarker0
+            ShortCut = 24624
+          end        
+          item
+            Command = ecSetMarker1
+            ShortCut = 24625
+          end        
+          item
+            Command = ecSetMarker2
+            ShortCut = 24626
+          end        
+          item
+            Command = ecSetMarker3
+            ShortCut = 24627
+          end        
+          item
+            Command = ecSetMarker4
+            ShortCut = 24628
+          end        
+          item
+            Command = ecSetMarker5
+            ShortCut = 24629
+          end        
+          item
+            Command = ecSetMarker6
+            ShortCut = 24630
+          end        
+          item
+            Command = ecSetMarker7
+            ShortCut = 24631
+          end        
+          item
+            Command = ecSetMarker8
+            ShortCut = 24632
+          end        
+          item
+            Command = ecSetMarker9
+            ShortCut = 24633
+          end        
+          item
+            Command = EcFoldLevel1
+            ShortCut = 41009
+          end        
+          item
+            Command = EcFoldLevel2
+            ShortCut = 41010
+          end        
+          item
+            Command = EcFoldLevel3
+            ShortCut = 41011
+          end        
+          item
+            Command = EcFoldLevel4
+            ShortCut = 41012
+          end        
+          item
+            Command = EcFoldLevel5
+            ShortCut = 41013
+          end        
+          item
+            Command = EcFoldLevel6
+            ShortCut = 41014
+          end        
+          item
+            Command = EcFoldLevel7
+            ShortCut = 41015
+          end        
+          item
+            Command = EcFoldLevel8
+            ShortCut = 41016
+          end        
+          item
+            Command = EcFoldLevel9
+            ShortCut = 41017
+          end        
+          item
+            Command = EcFoldLevel0
+            ShortCut = 41008
+          end        
+          item
+            Command = EcFoldCurrent
+            ShortCut = 41005
+          end        
+          item
+            Command = EcUnFoldCurrent
+            ShortCut = 41003
+          end        
+          item
+            Command = EcToggleMarkupWord
+            ShortCut = 32845
+          end        
+          item
+            Command = ecNormalSelect
+            ShortCut = 24654
+          end        
+          item
+            Command = ecColumnSelect
+            ShortCut = 24643
+          end        
+          item
+            Command = ecLineSelect
+            ShortCut = 24652
+          end        
+          item
+            Command = ecTab
+            ShortCut = 9
+          end        
+          item
+            Command = ecShiftTab
+            ShortCut = 8201
+          end        
+          item
+            Command = ecMatchBracket
+            ShortCut = 24642
+          end        
+          item
+            Command = ecColSelUp
+            ShortCut = 40998
+          end        
+          item
+            Command = ecColSelDown
+            ShortCut = 41000
+          end        
+          item
+            Command = ecColSelLeft
+            ShortCut = 40997
+          end        
+          item
+            Command = ecColSelRight
+            ShortCut = 40999
+          end        
+          item
+            Command = ecColSelPageDown
+            ShortCut = 40994
+          end        
+          item
+            Command = ecColSelPageBottom
+            ShortCut = 57378
+          end        
+          item
+            Command = ecColSelPageUp
+            ShortCut = 40993
+          end        
+          item
+            Command = ecColSelPageTop
+            ShortCut = 57377
+          end        
+          item
+            Command = ecColSelLineStart
+            ShortCut = 40996
+          end        
+          item
+            Command = ecColSelLineEnd
+            ShortCut = 40995
+          end        
+          item
+            Command = ecColSelEditorTop
+            ShortCut = 57380
+          end        
+          item
+            Command = ecColSelEditorBottom
+            ShortCut = 57379
+          end>
+        MouseActions = <>
+        MouseTextActions = <>
+        MouseSelActions = <>
+        Lines.Strings = (
+          'Select '
+          'Case when Artigo.ArtigoAnulado = ''1'' then Concat(Artigo.Artigo,'' [ >< ]'') else Artigo.Artigo end as ''Artigo'','
+          'SUBSTRING(dbo.Artigo.Artigo, 1, 3) + '' '' + SUBSTRING(dbo.Artigo.Artigo, 4, 10) AS ''fArtigo'','
+          'CASE WHEN ArtigoIdioma.Idioma IS NULL THEN Artigo.Descricao ELSE ArtigoIdioma.Descricao END DescAlt,'
+          'Trim(isNULL(ArtigoIdioma.DescricaoAbrev,Artigo.Descricao)) as ''DescricaoAbrev'','
+          'Concat(Cast(ArtigoMoeda.PVP4 as smallmoney),'' €'') as ''PVP'','
+          '(Case when ArtigoMoeda.Unidade = Artigo.UnidadeBase then Artigo.UnidadeVenda else ArtigoMoeda.Unidade end) as ''Un-PVP'','
+          'UnidadeVenda as ''Un-Vd'','
+          'Concat(Cast(ArtigoMoeda.PVP4 as smallmoney),'' €/'', (Case when ArtigoMoeda.Unidade = Artigo.UnidadeBase then Artigo.UnidadeVenda else ArtigoMoeda.Unidade end) ) as ''PVP_UN'','
+          'Concat((Select Descricao From Marcas Where Marcas.Marca = Artigo.Marca),'' '', Artigo.Modelo) as Modelo,'
+          'isnull(CodBarras,''---'') as CodBarras,'
+          'Format(GETDATE(),''d'',''pt-PT'') as ''DATA'','
+          'isnull(Replace(REPLACE(cast(Artigo.Observacoes as nvarchar(max)) , Char(10) , '''' ),char(13), '' | ''),''---'') as Observacoes, STKActual,'
+          'isnull((Select Sum(STKActual) From V_Inv_ArtigoArmazem Where V_INV_ArtigoArmazem.Artigo = Artigo.Artigo and Armazem = ''A1''),0) as A1,'
+          'isnull((Select Sum(STKActual) From V_Inv_ArtigoArmazem Where V_INV_ArtigoArmazem.Artigo = Artigo.Artigo and Armazem = ''A5''),0) as A5,'
+          'CASE WHEN ArtigoIdioma.Idioma IS NULL THEN '''' ELSE ArtigoIdioma.Caracteristicas END as ''Caractristicas'''
+          'From Artigo inner join ArtigoIdioma ON ArtigoIdioma.Artigo = Artigo.Artigo, ArtigoMoeda'
+          'Where ArtigoIdioma.Idioma=''PT'' AND ArtigoMoeda.Artigo = Artigo.Artigo AND'
+          'ARTIGO.FAMILIA IN (''003'')'
+          'Order By  DescAlt, Modelo, Artigo.Artigo'
+        )
+        Options2 = [eoAlwaysVisibleCaret, eoFoldedCopyPaste, eoOverwriteBlock, eoAcceptDragDropEditing]
+        VisibleSpecialChars = [vscSpace, vscTabAtLast]
+        RightEdge = 254
+        RightEdgeColor = clBtnFace
+        SelectedColor.BackPriority = 50
+        SelectedColor.ForePriority = 50
+        SelectedColor.FramePriority = 50
+        SelectedColor.BoldPriority = 50
+        SelectedColor.ItalicPriority = 50
+        SelectedColor.UnderlinePriority = 50
+        SelectedColor.StrikeOutPriority = 50
+        BracketHighlightStyle = sbhsBoth
+        BracketMatchColor.Background = clNone
+        BracketMatchColor.Foreground = clNone
+        BracketMatchColor.Style = [fsBold]
+        FoldedCodeColor.Background = clNone
+        FoldedCodeColor.Foreground = clGray
+        FoldedCodeColor.FrameColor = clGray
+        MouseLinkColor.Background = clNone
+        MouseLinkColor.Foreground = clBlue
+        LineHighlightColor.Background = clNone
+        LineHighlightColor.Foreground = clNone
+        TabWidth = 2
+        inline SynLeftGutterPartList1: TSynGutterPartList
+          object SynGutterMarks1: TSynGutterMarks
+            Width = 24
+            MouseActions = <>
+            MaxExtraMarksColums = 0
+            Options = [sgmoDeDuplicateMarksOnOverflow]
+            MarkupInfo.Background = clBtnFace
+            MarkupInfo.Foreground = clNone
+          end
+          object SynGutterLineNumber1: TSynGutterLineNumber
+            Width = 17
+            MouseActions = <>
+            MarkupInfo.Background = clBtnFace
+            MarkupInfo.Foreground = clNone
+            DigitCount = 2
+            ShowOnlyLineNumbersMultiplesOf = 1
+            ZeroStart = False
+            LeadingZeros = False
+          end
+          object SynGutterChanges1: TSynGutterChanges
+            Width = 4
+            MouseActions = <>
+            ModifiedColor = 59900
+            SavedColor = clGreen
+            MarkupInfo.Background = clNone
+            MarkupInfo.Foreground = clGreen
+            MarkupInfo.FrameColor = 59900
+          end
+          object SynGutterSeparator1: TSynGutterSeparator
+            Width = 2
+            MouseActions = <>
+            MarkupInfo.Background = clWhite
+            MarkupInfo.Foreground = clGray
+          end
+          object SynGutterCodeFolding1: TSynGutterCodeFolding
+            MouseActions = <>
+            MarkupInfo.Background = clNone
+            MarkupInfo.Foreground = clGray
+            MouseActionsExpanded = <>
+            MouseActionsCollapsed = <>
+          end
+        end
+      end
+    end
+  end
+  object SQLServerCon: TMSSQLConnection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    Left = 192
+    Top = 176
+  end
+  object SQLiteCon: TSQLite3Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    AlwaysUseBigint = False
+    Left = 368
+    Top = 176
+  end
+  object MySQL80Con: TMySQL80Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    SkipLibraryVersionCheck = False
+    Left = 280
+    Top = 176
+  end
+  object MySQL57Con: TMySQL57Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    SkipLibraryVersionCheck = False
+    Left = 280
+    Top = 224
+  end
+  object MySQL56Con: TMySQL56Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    SkipLibraryVersionCheck = False
+    Left = 280
+    Top = 272
+  end
+  object MySQL55Con: TMySQL55Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    SkipLibraryVersionCheck = False
+    Left = 280
+    Top = 320
+  end
+  object MySQL51Con: TMySQL51Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    SkipLibraryVersionCheck = False
+    Left = 280
+    Top = 368
+  end
+  object MySQL50Con: TMySQL50Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    SkipLibraryVersionCheck = False
+    Left = 280
+    Top = 416
+  end
+  object MySQL41Con: TMySQL41Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    Transaction = SQLT
+    SkipLibraryVersionCheck = False
+    Left = 280
+    Top = 469
+  end
+  object MySQL40Con: TMySQL40Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = True
+    SkipLibraryVersionCheck = False
+    Left = 280
+    Top = 520
+  end
+  object SQLT: TSQLTransaction
+    Active = False
+    Database = MySQL41Con
+    Left = 448
+    Top = 176
+  end
+  object SynSQL: TSynSQLSyn
+    DefaultFilter = 'SQL Files (*.sql)|*.sql'
+    CommentAttri.Foreground = clLime
+    DataTypeAttri.Foreground = clBlue
+    FunctionAttri.Foreground = 16735838
+    KeyAttri.Foreground = clBlue
+    NumberAttri.Foreground = clRed
+    StringAttri.Foreground = clRed
+    TableNameAttri.Foreground = clTeal
+    VariableAttri.Foreground = clBlue
+    SQLDialect = sqlMSSQL2K
+    Left = 520
+    Top = 176
+  end
+  object odXLS: TOpenDialog
+    Title = 'Abrir ficheiro de folhas de cálculo'
+    DefaultExt = '.xlsx'
+    Filter = 'Microsoft office Excel|*.xlsx;*.xlsm;*.xlsb;*.xltx;*.xltm;*.xls;*.xlt;*.xls;*.xml;*.xml;*.xlam;*.xla;*.xlw;*.xlr;|"Free Office"|*.ods;*.sxc|Texto linear|*.prn;*.txt;*.csv'
+    Options = [ofExtensionDifferent, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail, ofAutoPreview]
+    Left = 96
+    Top = 176
+  end
+  object odLite: TOpenDialog
+    Title = 'Abrir ficheiro SQLite'
+    DefaultExt = '.db'
+    Filter = 'SQLite|*.db;*.db3;*.sqlite;*.sqlite3;*.s3db;*.sl3'#10
+    Options = [ofExtensionDifferent, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofViewDetail, ofAutoPreview]
+    Left = 96
+    Top = 240
+  end
+end
