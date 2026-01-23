@@ -305,7 +305,7 @@ object fEtiqueta: TfEtiqueta
     TabOrder = 2
     OnChange = pcEtiquetasChange
     object tsEtiqueta0: TTabSheet
-      Caption = 'Etiqueta0'
+      Caption = 'Etiqueta 0'
       ClientHeight = 374
       ClientWidth = 1215
       TabVisible = False
@@ -314,23 +314,21 @@ object fEtiqueta: TfEtiqueta
         Height = 374
         Top = 0
         Width = 865
-        HorzScrollBar.Page = 556
-        VertScrollBar.Page = 292
+        HorzScrollBar.Page = 364
+        VertScrollBar.Page = 370
         Align = alClient
         ClientHeight = 370
-        ClientWidth = 861
+        ClientWidth = 844
         Color = clGray
         ParentBackground = False
         ParentColor = False
-        PopupMenu = pmContext
         TabOrder = 0
-        TabStop = True
         object pbDesign0: TPaintBox
           Left = 8
-          Height = 284
+          Height = 492
           Top = 8
-          Width = 548
-          Color = clWhite
+          Width = 356
+          Color = clWindow
           ParentColor = False
           PopupMenu = pmContext
           OnMouseDown = pbDesignMouseDown
@@ -348,60 +346,54 @@ object fEtiqueta: TfEtiqueta
         ClientHeight = 374
         ClientWidth = 350
         TabOrder = 1
-        OnResize = pObjetPlus0Resize
-        object sgProperties0: TStringGrid
-          Left = 1
-          Height = 217
-          Top = 156
-          Width = 348
-          Align = alClient
-          ColCount = 2
-          Columns = <          
-            item
-              Title.Font.Style = [fsBold]
-              Title.Caption = 'Propriedade'
-            end          
-            item
-              Title.Font.Style = [fsBold]
-              Title.Caption = 'Valor'
-            end>
-          DefaultColWidth = 90
-          FixedCols = 0
-          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goSmoothScroll]
-          RowCount = 1
-          TabOrder = 0
-          OnDrawCell = sgPropertiesDrawCell
-          OnMouseDown = sgPropertiesMouseDown
-          OnSelectEditor = sgPropertiesSelectEditor
-          OnSelectCell = sgPropertiesSelectCell
-          OnSetEditText = sgPropertiesSetEditText
-        end
+        OnResize = pObjetPlusResize
         object tvObjetos0: TTreeView
           Left = 1
           Height = 150
           Top = 1
           Width = 348
           Align = alTop
-          ExpandSignType = tvestPlusMinus
           HideSelection = False
           ReadOnly = True
-          TabOrder = 1
+          TabOrder = 0
           Options = [tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
-          Items.Data = {
-            F9FFFFFF0200010000000A0000000A000000FFFFFFFFFFFFFFFF000000000000
-            000000080000004574697175657461
-          }
           OnChange = tvObjetosChange
-          OnSelectionChanged = tvObjetosSelectionChanged
+        end
+        object sgProperties0: TStringGrid
+          Left = 1
+          Height = 218
+          Top = 155
+          Width = 348
+          Align = alClient
+          ColCount = 2
+          Columns = <          
+            item
+              Title.Caption = 'Propriedade'
+              Width = 150
+            end          
+            item
+              Title.Caption = 'Valor'
+              Width = 150
+            end>
+          FixedCols = 0
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goSmoothScroll]
+          TabOrder = 1
+          OnDrawCell = sgPropertiesDrawCell
+          OnButtonClick = sgPropertiesButtonClick
+          OnMouseDown = sgPropertiesMouseDown
+          OnSelectCell = sgPropertiesSelectCell
+          ColWidths = (
+            150
+            150
+          )
         end
         object splitterTVSG0: TSplitter
           Cursor = crVSplit
           Left = 1
-          Height = 5
+          Height = 4
           Top = 151
           Width = 348
           Align = alTop
-          AutoSnap = False
           ResizeAnchor = akTop
         end
         object cbColorEditor0: TColorBox
@@ -416,17 +408,8 @@ object fEtiqueta: TfEtiqueta
           ItemHeight = 16
           TabOrder = 3
           Visible = False
-          OnChange = cbColorEditor0Change
-          OnExit = cbColorEditor0Exit
-        end
-        object TIColorButton0: TTIColorButton
-          Left = 97
-          Height = 25
-          Top = 285
-          Width = 75
-          BorderWidth = 2
-          ButtonColorSize = 16
-          ButtonColor = clBlack
+          OnChange = cbColorEditorChange
+          OnExit = cbColorEditorExit
         end
       end
     end
@@ -447,7 +430,7 @@ object fEtiqueta: TfEtiqueta
     Color = clBtnFace
     ParentBackground = False
     ParentColor = False
-    TabOrder = 3
+    TabOrder = 4
     Visible = False
     object sgData: TStringGrid
       Left = 4

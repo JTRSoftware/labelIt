@@ -1,4 +1,4 @@
-﻿Unit uEtiqueta;
+Unit uEtiqueta;
 
 {$mode Delphi}{$H+}
 
@@ -25,6 +25,8 @@ Type
     LayoutRows: Integer;
     LayoutGapX: Integer;
     LayoutGapY: Integer;
+    PaperWidth: Integer;
+    PaperHeight: Integer;
     Constructor Create;
     Destructor Destroy; Override;
   End;
@@ -36,7 +38,6 @@ Type
   TfEtiqueta = Class(TForm)
     bPrint: TBitBtn;
     cbAlignTo: TComboBox;
-    cbColorEditor0: TColorBox;
     lDataStaus: TLabel;
     miTabRename: TMenuItem;
     miTabDelete: TMenuItem;
@@ -65,10 +66,8 @@ Type
     MySQL80Con: TMySQL80Connection;
     opdImagem: TOpenPictureDialog;
     pcEtiquetas: TPageControl;
-    pbDesign0: TPaintBox;
     pnlData: TPanel;
     pmData: TPopupMenu;
-    pObjetPlus0: TPanel;
     pmTab: TPopupMenu;
     pSeparador2: TPanel;
     pSeparador3: TPanel;
@@ -77,7 +76,6 @@ Type
     pTools: TPanel;
     pDataTools: TPanel;
     sbAutoSizeCols: TSpeedButton;
-    sbContainer0: TScrollBox;
     sbEqualizeWidth: TSpeedButton;
     sbEqualizeHeight: TSpeedButton;
     sbRefreshData: TSpeedButton;
@@ -97,7 +95,6 @@ Type
     sbAlignObjectRight: TSpeedButton;
     sbExpandMargins: TSpeedButton;
     sgData: TStringGrid;
-    sgProperties0: TStringGrid;
     SplitterData: TSplitter;
     pmContext: TPopupMenu;
     miDelete: TMenuItem;
@@ -108,16 +105,20 @@ Type
     miSeparator2: TMenuItem;
     miProperties: TMenuItem;
     Splitter2: TSplitter;
-    splitterTVSG0: TSplitter;
     SQLiteCon: TSQLite3Connection;
     SQLServerCon: TMSSQLConnection;
     SQLT: TSQLTransaction;
-    TIColorButton0: TTIColorButton;
     tsMais: TTabSheet;
     tsEtiqueta0: TTabSheet;
+    sbContainer0: TScrollBox;
+    pbDesign0: TPaintBox;
+    pObjetPlus0: TPanel;
+    tvObjetos0: TTreeView;
+    sgProperties0: TStringGrid;
+    splitterTVSG0: TSplitter;
+    cbColorEditor0: TColorBox;
     tmrFilter: TTimer;
     Qry: TSQLQuery;
-    tvObjetos0: TTreeView;
     Procedure FormClose(ASender: TObject; Var ACloseAction: TCloseAction);
     Procedure FormCreate(ASender: TObject);
     Procedure FormDestroy(ASender: TObject);
@@ -126,7 +127,7 @@ Type
     Procedure pbDesignMouseDown(ASender: TObject; AButton: TMouseButton; AShift: TShiftState; AX, AY: Integer);
     Procedure pbDesignMouseMove(ASender: TObject; AShift: TShiftState; AX, AY: Integer);
     Procedure pbDesignMouseUp(ASender: TObject; AButton: TMouseButton; AShift: TShiftState; AX, AY: Integer);
-    Procedure pObjetPlus0Resize(ASender: TObject);
+    Procedure pObjetPlusResize(ASender: TObject);
     Procedure sbAutoSizeColsClick(ASender: TObject);
     Procedure sbExternalDataClick(ASender: TObject);
     Procedure sgPropertiesSelectCell(ASender: TObject; ACol, ARow: Integer; Var ACanSelect: Boolean);
@@ -135,8 +136,8 @@ Type
     Procedure sgPropertiesDrawCell(ASender: TObject; ACol, ARow: Integer; ARect: TRect; AState: TGridDrawState);
     Procedure sgPropertiesSelectEditor(ASender: TObject; ACol, ARow: Integer; Var AEditor: TWinControl);
     Procedure sgPropertiesButtonClick(ASender: TObject; ACol, ARow: Integer);
-    Procedure cbColorEditor0Change(ASender: TObject);
-    Procedure cbColorEditor0Exit(ASender: TObject);
+    Procedure cbColorEditorChange(ASender: TObject);
+    Procedure cbColorEditorExit(ASender: TObject);
 
     Procedure miDeleteTabClick(ASender: TObject);
     Procedure DeleteActiveTab;
@@ -208,7 +209,7 @@ Type
     FBordersExpanded: Boolean;
     FCellPropsExpanded: Boolean;
     FGridPropsExpanded: Boolean;
-    FLayoutExpanded: Boolean;
+    FMosaicoExpanded: Boolean;
     FFontExpanded: Boolean;
     FFontStyleExpanded: Boolean;
     FUpdatingTree: Boolean;
@@ -258,7 +259,7 @@ Type
     FBatchRows: TList; // List of TStringList
     FIsFinished: Boolean;
     FFilters: TStringList; // NomeColuna=ValorFiltro
-    FCheckedKeys: TStringList; // ConteÃºdo das linhas que estavam marcadas
+    FCheckedKeys: TStringList; // Conteúdo das linhas que estavam marcadas
     FError: String;
     FPerformAutoSize: Boolean;
     Procedure SyncBatch;
@@ -274,8 +275,8 @@ Var
   fEtiqueta: TfEtiqueta;
 
 Const
-  sMenos = 'âž–';
-  sMais = 'âž•';
+  sMenos = #$E2#$9E#$96; // UTF-8 for ➖
+  sMais = #$E2#$9E#$95;  // UTF-8 for ➕
   sPropIndent = '    ';
   iCheckColWidth = 24;
 
@@ -287,7 +288,7 @@ Implementation
 
 Uses
   //Labelit
-  uDadosExternos, uMain;
+  uDadosExternos, uMain, uGridHelpers;
 
 { TTabSettings }
 
@@ -302,6 +303,8 @@ Begin
   LayoutRows := 1;
   LayoutGapX := 0;
   LayoutGapY := 0;
+  PaperWidth := 0;
+  PaperHeight := 0;
 End;
 
 Destructor TTabSettings.Destroy;
@@ -317,13 +320,12 @@ Begin
   FDataLoadedOnce := False;
   FIsAddingTab := False;
 
-  // tsEtiqueta0 is our first tab, initialize its settings
+  // tsEtiqueta0 is our template tab, keep it hidden and initialize it
   LSettings := TTabSettings.Create;
   tsEtiqueta0.Tag := PtrInt(LSettings);
-  tsEtiqueta0.Caption := 'Etiqueta 0';
-  tsEtiqueta0.TabVisible := True;
-  
-  // Initialize Defaults from Printer for the first tab
+  tsEtiqueta0.TabVisible := False;
+
+  // Initialize Defaults from Printer for the template tab
   If Printer.Printers.Count > 0 Then
   Begin
     LSettings.PrinterName := Printer.Printers[Printer.PrinterIndex];
@@ -334,21 +336,18 @@ Begin
     End;
   End;
 
-  // Por omissÃ£o, todas as secÃ§Ãµes comeÃ§am fechadas
+  // Por omissão, todas as secções começam fechadas
   FMarginsExpanded := False;
   FBordersExpanded := False;
   FCellPropsExpanded := False;
   FGridPropsExpanded := False;
-  FLayoutExpanded := False;
+  FMosaicoExpanded := False;
 
   // Enable form to capture keyboard events for shortcuts
   KeyPreview := True;
 
-  // Add the first tab if none exists (other than tsMais and tsEtiqueta0)
-  // Since we now use tsEtiqueta0 as the first one, we don't need to call AddNewTab here
-  // unless we want more than one at start.
-
-  ShowLabelProperties;
+  // Add the first visible tab dynamically
+  AddNewTab('Etiqueta 0');
 End;
 
 Procedure TfEtiqueta.FormClose(ASender: TObject; Var ACloseAction: TCloseAction);
@@ -389,6 +388,7 @@ End;
 
 Function TfEtiqueta.GetActivePaintBox: TPaintBox;
 Begin
+  If pcEtiquetas.ActivePage = tsEtiqueta0 Then Exit(pbDesign0);
   Result := nil;
   If pcEtiquetas.ActivePage <> nil Then
     Result := TPaintBox(pcEtiquetas.ActivePage.FindComponent('pbDesign'));
@@ -396,6 +396,7 @@ End;
 
 Function TfEtiqueta.GetActiveScrollBox: TScrollBox;
 Begin
+  If pcEtiquetas.ActivePage = tsEtiqueta0 Then Exit(sbContainer0);
   Result := nil;
   If pcEtiquetas.ActivePage <> nil Then
     Result := TScrollBox(pcEtiquetas.ActivePage.FindComponent('sbContainer'));
@@ -403,6 +404,7 @@ End;
 
 Function TfEtiqueta.GetActiveTreeView: TTreeView;
 Begin
+  If pcEtiquetas.ActivePage = tsEtiqueta0 Then Exit(tvObjetos0);
   Result := nil;
   If pcEtiquetas.ActivePage <> nil Then
     Result := TTreeView(pcEtiquetas.ActivePage.FindComponent('tvObjetos'));
@@ -410,6 +412,7 @@ End;
 
 Function TfEtiqueta.GetActivePropertiesGrid: TStringGrid;
 Begin
+  If pcEtiquetas.ActivePage = tsEtiqueta0 Then Exit(sgProperties0);
   Result := nil;
   If pcEtiquetas.ActivePage <> nil Then
     Result := TStringGrid(pcEtiquetas.ActivePage.FindComponent('sgProperties'));
@@ -481,7 +484,7 @@ Begin
   LPanel.Parent := LTab;
   LPanel.Width := 350;
   LPanel.Align := alRight;
-  LPanel.OnResize := pObjetPlus0Resize;
+  LPanel.OnResize := pObjetPlusResize;
 
   // TreeView
   LTV := TTreeView.Create(LTab);
@@ -533,7 +536,7 @@ Begin
   ShowLabelProperties;
   
   // Force initial resize for the properties grid
-  pObjetPlus0Resize(LPanel);
+  pObjetPlusResize(LPanel);
 End;
 
 Procedure TfEtiqueta.StopDataLoader;
@@ -588,27 +591,27 @@ Begin
   End;
 
   If LSettings.Orientation = poLandscape Then
-    AddProp('OrientaÃ§Ã£o', 'Landscape')
+    AddProp('Orientação', 'Landscape')
   Else
-    AddProp('OrientaÃ§Ã£o', 'Portrait');
+    AddProp('Orientação', 'Portrait');
 
-  If FLayoutExpanded Then
-    AddProp(sMenos + 'Layout', '')
+  If FMosaicoExpanded Then
+    AddProp(sMenos + 'Mosaico', '')
   Else
-    AddProp(sMais + 'Layout', '');
+    AddProp(sMais + 'Mosaico', '');
 
-  If FLayoutExpanded Then
+  If FMosaicoExpanded Then
   Begin
     AddProp(sPropIndent + 'Colunas', IntToStr(LSettings.LayoutCols));
     AddProp(sPropIndent + 'Linhas', IntToStr(LSettings.LayoutRows));
-    AddProp(sPropIndent + 'EspaÃ§o X (mm)', FloatToStrF(PxToMm(LSettings.LayoutGapX), ffFixed, 7, 2));
-    AddProp(sPropIndent + 'EspaÃ§o Y (mm)', FloatToStrF(PxToMm(LSettings.LayoutGapY), ffFixed, 7, 2));
+    AddProp(sPropIndent + 'Espaço X (mm)', FloatToStrF(PxToMm(LSettings.LayoutGapX), ffFixed, 7, 2));
+    AddProp(sPropIndent + 'Espaço Y (mm)', FloatToStrF(PxToMm(LSettings.LayoutGapY), ffFixed, 7, 2));
   End;
 
-  AddProp('Largura (mm)', FloatToStrF(PxToMm(GetActivePaintBox.Width), ffFixed, 7, 2));
-  AddProp('Altura (mm)', FloatToStrF(PxToMm(GetActivePaintBox.Height), ffFixed, 7, 2));
+  AddProp('Largura (mm)', FloatToStrF(PxToMm(LSettings.PaperWidth), ffFixed, 7, 2));
+  AddProp('Altura (mm)', FloatToStrF(PxToMm(LSettings.PaperHeight), ffFixed, 7, 2));
 
-  pObjetPlus0Resize(nil);
+  pObjetPlusResize(nil);
 End;
 
 Procedure TfEtiqueta.sgPropertiesMouseDown(ASender: TObject; AButton: TMouseButton; AShift: TShiftState; AX, AY: Integer);
@@ -640,7 +643,7 @@ Begin
         If Assigned(FSelectedItem) Then
           UpdatePropertiesPanel(FSelectedItem);
       End
-      Else If (Pos('CÃ©lula', LPropName) > 0) Then
+      Else If (Pos('Célula', LPropName) > 0) Then
       Begin
         FCellPropsExpanded := NOT FCellPropsExpanded;
         // Refresh
@@ -654,9 +657,9 @@ Begin
         If Assigned(FSelectedItem) Then
           UpdatePropertiesPanel(FSelectedItem);
       End
-      Else If (Pos('Layout', LPropName) > 0) Then
+      Else If (Pos('Mosaico', LPropName) > 0) Then
       Begin
-        FLayoutExpanded := NOT FLayoutExpanded;
+        FMosaicoExpanded := NOT FMosaicoExpanded;
         // Refresh
         If NOT Assigned(FSelectedItem) Then
           ShowLabelProperties;
@@ -675,7 +678,7 @@ Begin
       End
       Else If (Trim(LPropName) = 'Imagem') Then
       Begin
-        // Abrir diÃ¡logo para escolher imagem ao clicar no nome da propriedade
+        // Abrir diálogo para escolher imagem ao clicar no nome da propriedade
         If Assigned(FSelectedItem) AND (FSelectedItem IS TLabelImage) Then
         Begin
           If opdImagem.Execute Then
@@ -720,7 +723,7 @@ Begin
           sgPropertiesSetEditText(LSG, 1, LRow, LNewVal);
         End;
       End;
-      // Abrir diÃ¡logo para escolher imagem ao clicar no valor da propriedade
+      // Abrir diálogo para escolher imagem ao clicar no valor da propriedade
       If (Trim(LPropName) = 'Imagem') AND Assigned(FSelectedItem) AND (FSelectedItem IS TLabelImage) Then
       Begin
         If opdImagem.Execute Then
@@ -844,17 +847,31 @@ Begin
     Printer.SetPrinter(LSettings.PrinterName);
     Printer.PaperSize.PaperName := LSettings.PaperName;
 
-    // Get dimensions in printer pixels
-    LPWidth := Printer.PaperSize.Width;
-    LPHeight := Printer.PaperSize.Height;
-    LPDPIX := Printer.XDPI;
-    LPDPIY := Printer.YDPI;
+    If (LSettings.PaperWidth > 0) AND (LSettings.PaperHeight > 0) Then
+    Begin
+      LSWidth := LSettings.PaperWidth;
+      LSHeight := LSettings.PaperHeight;
+      LPDPIX := Screen.PixelsPerInch; // Base for converted values
+      LPDPIY := Screen.PixelsPerInch;
+    End
+    Else
+    Begin
+      // Get dimensions in printer pixels
+      LPWidth := Printer.PaperSize.Width;
+      LPHeight := Printer.PaperSize.Height;
+      LPDPIX := Printer.XDPI;
+      LPDPIY := Printer.YDPI;
 
-    If (LPDPIX = 0) OR (LPDPIY = 0) Then Exit;
+      If (LPDPIX = 0) OR (LPDPIY = 0) Then Exit;
 
-    // Convert to Screen Pixels (Screen.PixelsPerInch is usually 96)
-    LSWidth := Round(LPWidth / LPDPIX * Screen.PixelsPerInch);
-    LSHeight := Round(LPHeight / LPDPIY * Screen.PixelsPerInch);
+      // Convert to Screen Pixels (Screen.PixelsPerInch is usually 96)
+      LSWidth := Round(LPWidth / LPDPIX * Screen.PixelsPerInch);
+      LSHeight := Round(LPHeight / LPDPIY * Screen.PixelsPerInch);
+      
+      // Store detected size
+      LSettings.PaperWidth := LSWidth;
+      LSettings.PaperHeight := LSHeight;
+    End;
 
     // Get hardware margins (unprintable area) only if not loaded from file
     If NOT FDataLoadedOnce Then
@@ -888,9 +905,6 @@ Begin
       End;
     End;
 
-    LPB.Width := LSWidth;
-    LPB.Height := LSHeight;
-
     // Auto-detect multiple labels (e.g. "54mm x 3")
     LTemp := Pos(' X ', UpperCase(LSettings.PaperName));
     If LTemp > 0 Then
@@ -899,6 +913,30 @@ Begin
       If (LTemp > 0) AND (Pos('MM', UpperCase(Copy(LSettings.PaperName, LTemp + 3, 20))) = 0) Then
         LSettings.LayoutCols := LTemp;
     End;
+
+    // Store physical paper size
+    LSettings.PaperWidth := LSWidth;
+    LSettings.PaperHeight := LSHeight;
+
+    // Expand canvas (TPaintBox) to show objects outside the page
+    LPB.Width := LSWidth;
+    LPB.Height := LSHeight;
+
+    If Assigned(LabelManager) Then
+    Begin
+      For LTemp := 0 To LabelManager.Count - 1 Do
+      Begin
+        If LabelManager[LTemp].Left + LabelManager[LTemp].Width > LPB.Width Then
+          LPB.Width := LabelManager[LTemp].Left + LabelManager[LTemp].Width;
+        If LabelManager[LTemp].Top + LabelManager[LTemp].Height > LPB.Height Then
+          LPB.Height := LabelManager[LTemp].Top + LabelManager[LTemp].Height;
+      End;
+    End;
+
+    // Add extra space padding
+    LPB.Width := LPB.Width + 200;
+    LPB.Height := LPB.Height + 200;
+
   Except
     SysUtils.Beep;
   End;
@@ -1116,7 +1154,7 @@ Begin
     If LAdded Then
       GetActivePaintBox.Invalidate
     Else
-      ShowMessage('A grelha selecionada nÃ£o tem cÃ©lulas vazias.');
+      ShowMessage('A grelha selecionada não tem células vazias.');
 
     Exit;
   End;
@@ -1141,7 +1179,8 @@ End;
 
 Procedure TfEtiqueta.pbDesignPaint(ASender: TObject);
 Var
-  Li: Integer;
+  Li, Lj: Integer;
+  Lr, Lc, RX, RY: Integer;
   LPB: TPaintBox;
   LSettings: TTabSettings;
 
@@ -1172,21 +1211,27 @@ Begin
   LSettings := GetActiveSettings;
   If LSettings = nil Then Exit;
 
-  // Preencher o fundo com a cor definida
-  LPB.Canvas.Brush.Color := LPB.Color;
+  // Preencher o fundo do workspace (fora do papel)
+  LPB.Canvas.Brush.Color := clGray;
   LPB.Canvas.Brush.Style := bsSolid;
   LPB.Canvas.FillRect(Rect(0, 0, LPB.Width, LPB.Height));
+
+  // Preencher a área da etiqueta (Papel)
+  LPB.Canvas.Brush.Color := LPB.Color;
+  LPB.Canvas.FillRect(Rect(0, 0, LSettings.PaperWidth, LSettings.PaperHeight));
 
   // Desenhar a borda da etiqueta
   LPB.Canvas.Pen.Color := clBlack;
   LPB.Canvas.Pen.Style := psDash;
   LPB.Canvas.Brush.Style := bsClear;
-  LPB.Canvas.Rectangle(0, 0, LPB.Width, LPB.Height);
+  LPB.Canvas.Rectangle(0, 0, LSettings.PaperWidth, LSettings.PaperHeight);
 
   // Desenhar Margens
   LPB.Canvas.Pen.Color := clSilver;
   LPB.Canvas.Pen.Style := psDot;
-  LPB.Canvas.Rectangle(LSettings.Margins.Left, LSettings.Margins.Top, LPB.Width - LSettings.Margins.Right, LPB.Height - LSettings.Margins.Bottom);
+  LPB.Canvas.Rectangle(LSettings.Margins.Left, LSettings.Margins.Top, 
+                       LSettings.PaperWidth - LSettings.Margins.Right, 
+                       LSettings.PaperHeight - LSettings.Margins.Bottom);
 
   // Desenhar objetos
   If Assigned(LabelManager) Then
@@ -1196,6 +1241,51 @@ Begin
     // Draw selection handles for selected items (recursive)
     For Li := 0 To LabelManager.Count - 1 Do
       DrawHandles(LabelManager[Li]);
+  End;
+
+  // Desenhar exemplificação visual do Mosaico (Repetição)
+  If (LSettings.LayoutCols > 1) OR (LSettings.LayoutRows > 1) Then
+  Begin
+    LPB.Canvas.Pen.Color := $00D0D0D0; // Cinza claro
+    LPB.Canvas.Pen.Style := psDot;
+    LPB.Canvas.Brush.Style := bsClear;
+
+    Li := LSettings.PaperWidth - LSettings.Margins.Left - LSettings.Margins.Right; // WorkWidth
+    Lj := LSettings.PaperHeight - LSettings.Margins.Top - LSettings.Margins.Bottom; // WorkHeight
+
+    If (LSettings.LayoutCols > 0) AND (LSettings.LayoutRows > 0) Then
+    Begin
+      // CellW/H
+      // Li is width, Lj is height
+      // Usar double para precisão no cálculo
+      Try
+        For Lr := 0 To LSettings.LayoutRows - 1 Do
+          For Lc := 0 To LSettings.LayoutCols - 1 Do
+          Begin
+            If (Lc = 0) AND (Lr = 0) Then Continue; // Já desenhado pela borda principal/margens
+
+            // Cálculo da posição da repetição
+            // Uma etiqueta individual tem o tamanho disponível dividido pelas colunas/linhas menos os gaps
+            // Na verdade, no desenho, apenas mostramos as áreas onde as repetições ocorrerão
+            // Assumimos que o desenho atual é a primeira etiqueta
+            // Posição c, r:
+            // X = Margem.Left + c * (LabelW + GapX)
+            // Y = Margem.Top + r * (LabelH + GapY)
+
+            // Como não sabemos o LabelW exato (pode ser o que sobrar), calculamos
+            // LabelW = (WorkWidth - (Cols - 1) * GapX) / Cols
+            // RX := LSettings.Margins.Left + Round(Lc * ((Li - (LSettings.LayoutCols-1)*LSettings.LayoutGapX)/LSettings.LayoutCols + LSettings.LayoutGapX));
+            // Simplificado:
+            RX := LSettings.Margins.Left + Round(Lc * ( (Li + LSettings.LayoutGapX) / LSettings.LayoutCols ));
+            RY := LSettings.Margins.Top + Round(Lr * ( (Lj + LSettings.LayoutGapY) / LSettings.LayoutRows ));
+            
+            // Desenhar apenas o retângulo da área da etiqueta repetida
+            LPB.Canvas.Rectangle(RX, RY, RX + Round((Li - (LSettings.LayoutCols-1)*LSettings.LayoutGapX)/LSettings.LayoutCols),
+                                      RY + Round((Lj - (LSettings.LayoutRows-1)*LSettings.LayoutGapY)/LSettings.LayoutRows));
+          End;
+      Except
+      End;
+    End;
   End;
 End;
 
@@ -1213,7 +1303,7 @@ Begin
   Begin
     LItem := LabelManager.FindItemAt(AX, AY);
 
-    // Drill-down para grelhas se clicarmos numa cÃ©lula com conteÃºdo
+    // Drill-down para grelhas se clicarmos numa célula com conteúdo
     If (LItem <> nil) AND (LItem IS TLabelGrid) Then
     Begin
       LGrid := TLabelGrid(LItem);
@@ -1227,7 +1317,7 @@ Begin
 
     If Assigned(LItem) Then
     Begin
-      // Se o item nÃ£o estiver selecionado, limpamos tudo e selecionamos este
+      // Se o item não estiver selecionado, limpamos tudo e selecionamos este
       If NOT LItem.Selected Then
       Begin
         LabelManager.DeselectAll;
@@ -1237,7 +1327,7 @@ Begin
       FSelectedItem := LItem;
 
       // Se for uma grelha (ou se o item selecionado estiver numa grelha)
-      // garantimos que a cÃ©lula sob o rato estÃ¡ selecionada para o menu de contexto
+      // garantimos que a célula sob o rato está selecionada para o menu de contexto
       If LItem IS TLabelGrid Then
       Begin
         LGrid := TLabelGrid(LItem);
@@ -1249,8 +1339,8 @@ Begin
       End
       Else
       Begin
-        // Se for um item dentro de uma grelha, tambÃ©m queremos que a cÃ©lula esteja selecionada
-        // para que as opÃ§Ãµes de grelha apareÃ§am no menu de contexto
+        // Se for um item dentro de uma grelha, também queremos que a célula esteja selecionada
+        // para que as opções de grelha apareçam no menu de contexto
         For Li := 0 To LabelManager.Count - 1 Do
         Begin
           If LabelManager[Li] IS TLabelGrid Then
@@ -1628,6 +1718,7 @@ Begin
   FDragItem := nil;
   FResizingGrid := nil;
   FResizeHandle := rhNone;
+  UpdateLabelSize;
 End;
 
 Procedure TfEtiqueta.sbAlignObjectClick(ASender: TObject);
@@ -1652,7 +1743,7 @@ Begin
     If LAlignToPage Then
     Begin
       // Align to Page Margins
-      LRefRect := Rect(LSettings.Margins.Left, LSettings.Margins.Top, GetActivePaintBox.Width - LSettings.Margins.Right, GetActivePaintBox.Height - LSettings.Margins.Bottom);
+      LRefRect := Rect(LSettings.Margins.Left, LSettings.Margins.Top, LSettings.PaperWidth - LSettings.Margins.Right, LSettings.PaperHeight - LSettings.Margins.Bottom);
     End
     Else
     Begin
@@ -1719,7 +1810,7 @@ Begin
       LItem := TLabelItem(LSelectedItems[Li]);
       LFound := False;
 
-      // 1. Verificar se o objeto estÃ¡ dentro de uma grelha
+      // 1. Verificar se o objeto está dentro de uma grelha
       For Lj := 0 To LabelManager.Count - 1 Do
       Begin
         If LabelManager[Lj] IS TLabelGrid Then
@@ -1767,11 +1858,11 @@ Begin
       End
       Else
       Begin
-        // 2. Expandir para as margens da pÃ¡gina
+        // 2. Expandir para as margens da página
         LItem.Left := LSettings.Margins.Left;
         LItem.Top := LSettings.Margins.Top;
-        LItem.Width := GetActivePaintBox.Width - LSettings.Margins.Left - LSettings.Margins.Right;
-        LItem.Height := GetActivePaintBox.Height - LSettings.Margins.Top - LSettings.Margins.Bottom;
+        LItem.Width := LSettings.PaperWidth - LSettings.Margins.Left - LSettings.Margins.Right;
+        LItem.Height := LSettings.PaperHeight - LSettings.Margins.Top - LSettings.Margins.Bottom;
       End;
     End;
 
@@ -1983,7 +2074,7 @@ Begin
   End;
 End;
 
-Procedure TfEtiqueta.pObjetPlus0Resize(ASender: TObject);
+Procedure TfEtiqueta.pObjetPlusResize(ASender: TObject);
 Var
   LSG: TStringGrid;
 Begin
@@ -1998,6 +2089,7 @@ Procedure TfEtiqueta.sbAutoSizeColsClick(ASender: TObject);
 Begin
   sgData.AutoSizeColumns;
   sgData.ColWidths[0] := iCheckColWidth;
+  sgData.AjustarLarguraAoLimite;
 End;
 
 Procedure TfEtiqueta.sbExternalDataClick(ASender: TObject);
@@ -2070,7 +2162,7 @@ Begin
   // Count valid tabs
   LCount := 0;
   For i := 0 To pcEtiquetas.PageCount - 1 Do
-    If (pcEtiquetas.Pages[i].Tag <> 0) AND (pcEtiquetas.Pages[i] <> tsEtiqueta0) Then
+    If (pcEtiquetas.Pages[i].Tag <> 0) Then
       Inc(LCount);
 
   EtiquetaFile.Modelos := nil;
@@ -2088,6 +2180,8 @@ Begin
     EtiquetaFile.Modelos[LCount].Titulo := pcEtiquetas.Pages[i].Caption;
     EtiquetaFile.Modelos[LCount].Impressora := LSettings.PrinterName;
     EtiquetaFile.Modelos[LCount].Papel := LSettings.PaperName;
+    EtiquetaFile.Modelos[LCount].Tamanho.Largura := PxToMm(LSettings.PaperWidth);
+    EtiquetaFile.Modelos[LCount].Tamanho.Altura := PxToMm(LSettings.PaperHeight);
 
     EtiquetaFile.Modelos[LCount].Margens.Esquerda := PxToMm(LSettings.Margins.Left);
     EtiquetaFile.Modelos[LCount].Margens.Cima := PxToMm(LSettings.Margins.Top);
@@ -2130,37 +2224,22 @@ Begin
 
   If Length(EtiquetaFile.Modelos) = 0 Then
   Begin
-    // Ensure the default tab is clean
-    LSettings := TTabSettings(tsEtiqueta0.Tag);
-    If Assigned(LSettings) Then
-      LSettings.LabelManager.Clear;
-    tsEtiqueta0.Caption := 'Etiqueta 0';
-    pcEtiquetas.ActivePage := tsEtiqueta0;
+    AddNewTab('Etiqueta 0');
     Exit;
   End;
 
   For i := 0 To High(EtiquetaFile.Modelos) Do
   Begin
-    If i = 0 Then
-    Begin
-      // Reuse the default tab for the first model
-      tsEtiqueta0.Caption := EtiquetaFile.Modelos[i].Titulo;
-      pcEtiquetas.ActivePage := tsEtiqueta0;
-      LSettings := GetActiveSettings;
-      // Clear any existing items in the default tab
-      LSettings.LabelManager.Clear;
-    End
-    Else
-    Begin
-      // Create new tabs for subsequent models
-      AddNewTab(EtiquetaFile.Modelos[i].Titulo);
-      LSettings := GetActiveSettings;
-    End;
+    // Create new tabs for all models
+    AddNewTab(EtiquetaFile.Modelos[i].Titulo);
+    LSettings := GetActiveSettings;
 
     LManager := LSettings.LabelManager;
 
     LSettings.PrinterName := EtiquetaFile.Modelos[i].Impressora;
     LSettings.PaperName := EtiquetaFile.Modelos[i].Papel;
+    LSettings.PaperWidth := MmToPx(EtiquetaFile.Modelos[i].Tamanho.Largura);
+    LSettings.PaperHeight := MmToPx(EtiquetaFile.Modelos[i].Tamanho.Altura);
     LSettings.Margins.Left := MmToPx(EtiquetaFile.Modelos[i].Margens.Esquerda);
     LSettings.Margins.Top := MmToPx(EtiquetaFile.Modelos[i].Margens.Cima);
     LSettings.Margins.Right := MmToPx(EtiquetaFile.Modelos[i].Margens.Direita);
@@ -2222,7 +2301,7 @@ Begin
   If ARow = 1 Then FLastFilterValue := sgData.Cells[ACol, ARow];
   If ARow = 1 Then
   Begin
-    If ACol = 0 Then // Coluna de checkbox de filtro nÃ£o Ã© editÃ¡vel por texto
+    If ACol = 0 Then // Coluna de checkbox de filtro não é editável por texto
     Begin
       If goEditing IN sgData.Options Then
         sgData.Options := sgData.Options - [goEditing];
@@ -2289,7 +2368,7 @@ Begin
   End
   Else If ARow = 1 Then
   Begin
-    // Desenhar apenas a moldura na linha de filtros para parecer uma caixa de ediÃ§Ã£o
+    // Desenhar apenas a moldura na linha de filtros para parecer uma caixa de edição
     sgData.Canvas.Brush.Style := bsClear;
     sgData.Canvas.Pen.Color := clSilver;
     sgData.Canvas.Rectangle(ARect);
@@ -2299,14 +2378,14 @@ End;
 
 Procedure TfEtiqueta.sgDataPrepareCanvas(ASender: TObject; ACol, ARow: Integer; AState: TGridDrawState);
 Begin
-  // ForÃ§ar cores na linha de filtros para que o texto nunca fique "invisÃ­vel"
+  // Forçar cores na linha de filtros para que o texto nunca fique "invisível"
   If ARow = 1 Then
   Begin
     sgData.Canvas.Brush.Color := clWhite;
     sgData.Canvas.Font.Color := clWindowText;
     sgData.Canvas.Font.Style := [];
 
-    // Se a cÃ©lula estiver selecionada ou focada, mantemos o fundo branco/claro
+    // Se a célula estiver selecionada ou focada, mantemos o fundo branco/claro
     If (gdSelected IN AState) OR (gdFocused IN AState) Then
       sgData.Canvas.Brush.Color := $00F5F5F5;
   End;
@@ -2329,7 +2408,7 @@ Begin
     LFilters := TStringList.Create;
     LCheckedKeys := TStringList.Create;
     Try
-      // Recolher chaves das linhas marcadas para as preservar apÃ³s o reload
+      // Recolher chaves das linhas marcadas para as preservar após o reload
       For Li := 2 To sgData.RowCount - 1 Do
       Begin
         If sgData.Cells[0, Li] = '1' Then
@@ -2352,7 +2431,7 @@ Begin
       If sgData.Cells[0, 1] = '1' Then
         LFilters.Add('_CHECKED_=1');
 
-      // Preservar posiÃ§Ã£o do cursor se estivermos a editar a linha de filtros
+      // Preservar posição do cursor se estivermos a editar a linha de filtros
       LSelStart := -1;
       LEditor := nil;
       If (sgData.Row = 1) AND Assigned(sgData.Editor) AND (sgData.Editor IS TCustomEdit) Then
@@ -2364,13 +2443,13 @@ Begin
 
       sgData.BeginUpdate;
       Try
-        // Limpar apenas as linhas de dados, manter cabeÃ§alho e filtros
+        // Limpar apenas as linhas de dados, manter cabeçalho e filtros
         sgData.RowCount := 2;
       Finally
         sgData.EndUpdate;
       End;
 
-      // Restaurar posiÃ§Ã£o do cursor
+      // Restaurar posição do cursor
       If (LSelStart >= 0) AND Assigned(LEditor) Then
       Begin
         LEditor.SelStart := LSelStart;
@@ -2406,11 +2485,11 @@ Var
       LTargetRow := LBaseRow + AItem.RecordOffset;
       LValue := '';
 
-      // Validar limites (linha 0 Ã© cabeÃ§alho, linha 1 Ã© filtro, dados comeÃ§am na 2)
+      // Validar limites (linha 0 é cabeçalho, linha 1 é filtro, dados começam na 2)
       If (LTargetRow >= 2) AND (LTargetRow < sgData.RowCount) Then
       Begin
         LColIdx := -1;
-        // Encontrar Ã­ndice da coluna pelo nome (FieldName)
+        // Encontrar índice da coluna pelo nome (FieldName)
         For Lc := 1 To sgData.ColCount - 1 Do
         Begin
           If SameText(sgData.Cells[Lc, 0], AItem.FieldName) Then
@@ -2458,7 +2537,7 @@ Var
   End;
 
 Begin
-  If sgData.RowCount < 3 Then Exit; // Apenas cabeÃ§alho e filtros
+  If sgData.RowCount < 3 Then Exit; // Apenas cabeçalho e filtros
 
   LBaseRow := ARow;
   If LBaseRow < 0 Then LBaseRow := sgData.Row;
@@ -2466,7 +2545,7 @@ Begin
 
   For Li := 0 To pcEtiquetas.PageCount - 1 Do
   Begin
-    If (pcEtiquetas.Pages[Li].Tag = 0) OR (pcEtiquetas.Pages[Li] = tsEtiqueta0) Then Continue;
+    If (pcEtiquetas.Pages[Li].Tag = 0) Then Continue;
     LManager := TTabSettings(pcEtiquetas.Pages[Li].Tag).LabelManager;
     For Lj := 0 To LManager.Count - 1 Do
       UpdateItem(LManager[Lj]);
@@ -2493,7 +2572,7 @@ Var
   LPropName, LPropValue: String;
   LFirstItem: TLabelItem;
   LSameValue: Boolean;
-  // Added: used when presenting propriedades do objeto contido numa cÃ©lula
+  // Added: used when presenting propriedades do objeto contido numa célula
   LChildItem: TLabelItem;
   LP: TPoint;
   LHasCellObject: Boolean;
@@ -2528,8 +2607,8 @@ Var
       Exit;
     End;
 
-    // Se estivermos numa grelha e houver um objeto na cÃ©lula,
-    // as propriedades sem prefixo referem-se ao objeto da cÃ©lula.
+    // Se estivermos numa grelha e houver um objeto na célula,
+    // as propriedades sem prefixo referem-se ao objeto da célula.
     If (AObj IS TLabelGrid) Then
     Begin
       LGrid := TLabelGrid(AObj);
@@ -2561,7 +2640,7 @@ Var
             Else If SameText(LRealPropName, 'Estilo') Then Result := '' // Header
             Else If SameText(LRealPropName, 'Negrito') Then Result := BoolToStr(fsBold IN TLabelText(LChildItem).Font.Style, True)
             Else If SameText(LRealPropName, 'Sublinhado') Then Result := BoolToStr(fsUnderline IN TLabelText(LChildItem).Font.Style, True)
-            Else If SameText(LRealPropName, 'ItÃ¡lico') Then Result := BoolToStr(fsItalic IN TLabelText(LChildItem).Font.Style, True)
+            Else If SameText(LRealPropName, 'Itálico') Then Result := BoolToStr(fsItalic IN TLabelText(LChildItem).Font.Style, True)
             Else If SameText(LRealPropName, 'Rasurado') Then Result := BoolToStr(fsStrikeOut IN TLabelText(LChildItem).Font.Style, True)
             Else If SameText(LRealPropName, 'Alinham. H.') Then
             Begin
@@ -2585,7 +2664,7 @@ Var
           Begin
             If SameText(LRealPropName, 'Texto') Then Result := TLabelBarcode(LChildItem).Text
             Else If SameText(LRealPropName, 'Mostrar Texto') Then Result := BoolToStr(TLabelBarcode(LChildItem).ShowText, True)
-            Else If SameText(LRealPropName, 'MÃ³dulo') Then Result := FloatToStrF(TLabelBarcode(LChildItem).Module, ffFixed, 7, 2)
+            Else If SameText(LRealPropName, 'Módulo') Then Result := FloatToStrF(TLabelBarcode(LChildItem).Module, ffFixed, 7, 2)
             Else If SameText(LRealPropName, 'Tipo') Then
             Begin
               Case TLabelBarcode(LChildItem).Kind Of
@@ -2614,7 +2693,7 @@ Var
       End;
     End;
 
-    // Propriedades padrÃ£o do objeto (ou da grelha se nÃ£o houver objeto na cÃ©lula)
+    // Propriedades padrão do objeto (ou da grelha se não houver objeto na célula)
     If LRealPropName = 'Nome' Then Result := AObj.Name
     Else If LRealPropName = 'Left (mm)' Then Result := FloatToStrF(PxToMm(AObj.Left), ffFixed, 7, 2)
     Else If LRealPropName = 'Top (mm)' Then Result := FloatToStrF(PxToMm(AObj.Top), ffFixed, 7, 2)
@@ -2636,7 +2715,7 @@ Var
       Else If LRealPropName = 'Estilo' Then Result := '' // Header
       Else If LRealPropName = 'Negrito' Then Result := BoolToStr(fsBold IN TLabelText(AObj).Font.Style, True)
       Else If LRealPropName = 'Sublinhado' Then Result := BoolToStr(fsUnderline IN TLabelText(AObj).Font.Style, True)
-      Else If LRealPropName = 'ItÃ¡lico' Then Result := BoolToStr(fsItalic IN TLabelText(AObj).Font.Style, True)
+      Else If LRealPropName = 'Itálico' Then Result := BoolToStr(fsItalic IN TLabelText(AObj).Font.Style, True)
       Else If LRealPropName = 'Rasurado' Then Result := BoolToStr(fsStrikeOut IN TLabelText(AObj).Font.Style, True)
       Else If LRealPropName = 'WordWrap' Then Result := BoolToStr(TLabelText(AObj).WordWrap, True)
       Else If LRealPropName = 'Alinham. H.' Then
@@ -2660,7 +2739,7 @@ Var
     Begin
       If LRealPropName = 'Texto' Then Result := TLabelBarcode(AObj).Text
       Else If LRealPropName = 'Mostrar Texto' Then Result := BoolToStr(TLabelBarcode(AObj).ShowText, True)
-      Else If LRealPropName = 'MÃ³dulo' Then Result := FloatToStrF(TLabelBarcode(AObj).Module, ffFixed, 7, 2)
+      Else If LRealPropName = 'Módulo' Then Result := FloatToStrF(TLabelBarcode(AObj).Module, ffFixed, 7, 2)
       Else If LRealPropName = 'Ratio' Then Result := FloatToStrF(TLabelBarcode(AObj).Ratio, ffFixed, 7, 2)
       Else If LRealPropName = 'Tipo' Then
       Begin
@@ -2750,7 +2829,7 @@ Begin
               LCommonProps.Add(sPropIndent + sMenos + 'Estilo');
               LCommonProps.Add(sPropIndent + sPropIndent + 'Negrito');
               LCommonProps.Add(sPropIndent + sPropIndent + 'Sublinhado');
-              LCommonProps.Add(sPropIndent + sPropIndent + 'ItÃ¡lico');
+              LCommonProps.Add(sPropIndent + sPropIndent + 'Itálico');
               LCommonProps.Add(sPropIndent + sPropIndent + 'Rasurado');
             End
             Else
@@ -2768,7 +2847,7 @@ Begin
           LCommonProps.Add('Texto');
           LCommonProps.Add('Tipo');
           LCommonProps.Add('Mostrar Texto');
-          LCommonProps.Add('MÃ³dulo');
+          LCommonProps.Add('Módulo');
           LCommonProps.Add('Ratio');
         End
         Else If LFirstItem IS TLabelImage Then
@@ -2779,7 +2858,7 @@ Begin
         End
         Else If LFirstItem IS TLabelGrid Then
         Begin
-          // Por omissÃ£o, assumimos que nÃ£o hÃ¡ objeto em cÃ©lula selecionada
+          // Por omissão, assumimos que não há objeto em célula selecionada
           LHasCellObject := False;
 
           If TLabelGrid(LFirstItem).GetSelectionCount > 0 Then
@@ -2791,7 +2870,7 @@ Begin
               If Assigned(LChildItem) Then
               Begin
                 LHasCellObject := True;
-                // Propriedades do Objeto (Principais) - JÃ¡ adicionadas no inÃ­cio, mas aqui definimos o contexto
+                // Propriedades do Objeto (Principais) - Já adicionadas no início, mas aqui definimos o contexto
 
                 If LChildItem IS TLabelText Then
                 Begin
@@ -2808,7 +2887,7 @@ Begin
                   LCommonProps.Add('Texto');
                   LCommonProps.Add('Tipo');
                   LCommonProps.Add('Mostrar Texto');
-                  LCommonProps.Add('MÃ³dulo');
+                  LCommonProps.Add('Módulo');
                   LCommonProps.Add('Ratio');
                 End
                 Else If LChildItem IS TLabelImage Then
@@ -2820,11 +2899,11 @@ Begin
               End;
             End;
 
-            // Grupo CÃ©lula (SecundÃ¡rio)
+            // Grupo Célula (Secundário)
             If FCellPropsExpanded Then
-              LCommonProps.Add(sMenos + 'CÃ©lula')
+              LCommonProps.Add(sMenos + 'Célula')
             Else
-              LCommonProps.Add(sMais + 'CÃ©lula');
+              LCommonProps.Add(sMais + 'Célula');
 
             If FCellPropsExpanded Then
             Begin
@@ -2845,7 +2924,7 @@ Begin
               End;
             End;
 
-            // Grupo Grelha (TerciÃ¡rio)
+            // Grupo Grelha (Terciário)
             If LHasCellObject Then
             Begin
               If FGridPropsExpanded Then
@@ -2899,7 +2978,7 @@ Begin
           LCommonProps.Add('Texto');
           LCommonProps.Add('Tipo');
           LCommonProps.Add('Mostrar Texto');
-          LCommonProps.Add('MÃ³dulo');
+          LCommonProps.Add('Módulo');
         End;
 
         // Check if all are Grid
@@ -2940,7 +3019,7 @@ Begin
       LCommonProps.Free;
     End;
 
-    pObjetPlus0Resize(nil);
+    pObjetPlusResize(nil);
 
     // Update Equalize Buttons State
     sbEqualizeWidth.Enabled := False;
@@ -2975,15 +3054,15 @@ Var
   LUName: String;
 Begin
   LUName := UpperCase(APaperName);
-  // Tamanhos personalizados ou definidos pelo utilizador sÃ£o sempre editÃ¡veis
+  // Tamanhos personalizados ou definidos pelo utilizador são sempre editáveis
   If (Pos('CUSTOM', LUName) > 0) OR (Pos('USER', LUName) > 0) OR (Pos('PERSONALIZADO', LUName) > 0) OR (Pos('DEFINIDO PELO UTILIZADOR', LUName) > 0) OR (APaperName = '') Then
   Begin
     Result := True;
     Exit;
   End;
 
-  // Tamanhos de papel comuns (SÃ©ries A, B, Letter, etc.)
-  // Estes permitem ajustes pois os fabricantes de papel podem ter ligeiras variaÃ§Ãµes
+  // Tamanhos de papel comuns (Séries A, B, Letter, etc.)
+  // Estes permitem ajustes pois os fabricantes de papel podem ter ligeiras variações
   Result := (Pos('A0', LUName) > 0) OR (Pos('A1', LUName) > 0) OR (Pos('A2', LUName) > 0) OR (Pos('A3', LUName) > 0) OR (Pos('A4', LUName) > 0) OR
     (Pos('A5', LUName) > 0) OR (Pos('A6', LUName) > 0) OR (Pos('B0', LUName) > 0) OR (Pos('B1', LUName) > 0) OR (Pos('B2', LUName) > 0) OR
     (Pos('B3', LUName) > 0) OR (Pos('B4', LUName) > 0) OR (Pos('B5', LUName) > 0) OR (Pos('LETTER', LUName) > 0) OR (Pos('LEGAL', LUName) > 0) OR
@@ -2999,21 +3078,21 @@ Var
 Begin
   LUName := UpperCase(APaperName);
 
-  // 1. Etiquetas circulares NÃƒO sÃ£o contÃ­nuas (tÃªm diÃ¢metro fixo)
+  // 1. Etiquetas circulares NÃƒO são contínuas (têm diâmetro fixo)
   If (Pos('DIA', LUName) > 0) OR (Pos('DIAMETER', LUName) > 0) Then
   Begin
     Result := False;
     Exit;
   End;
 
-  // 2. VerificaÃ§Ã£o por palavras-chave conhecidas
+  // 2. Verificação por palavras-chave conhecidas
   If (Pos('CONTINUOUS', LUName) > 0) OR (Pos('CONTÃNUO', LUName) > 0) OR (Pos('ROLL', LUName) > 0) OR (Pos('ROLO', LUName) > 0) Then
   Begin
     Result := True;
     Exit;
   End;
 
-  // 3. HeurÃ­stica: Apenas uma dimensÃ£o mencionada (ex: "62mm" vs "62mm x 29mm")
+  // 3. Heurística: Apenas uma dimensão mencionada (ex: "62mm" vs "62mm x 29mm")
   LNumCount := 0;
   LInNum := False;
   For Li := 1 To Length(LUName) Do
@@ -3030,8 +3109,8 @@ Begin
       LInNum := False;
   End;
 
-  // Se tem exatamente um nÃºmero e menciona 'mm', e comeÃ§a por nÃºmero
-  // Ã© um rolo contÃ­nuo.
+  // Se tem exatamente um número e menciona 'mm', e começa por número
+  // é um rolo contínuo.
   Result := (LNumCount = 1) AND (Pos('MM', LUName) > 0) AND (LUName[1] IN ['0'..'9']);
 End;
 
@@ -3057,7 +3136,7 @@ Begin
   LPropName := LSG.Cells[0, LSG.Row];
 
   // List of numeric properties (Integer or Float)
-  If (Pos('mm', LPropName) > 0) OR (Trim(LPropName) = 'Tamanho') OR (LPropName = 'MÃ³dulo') OR (LPropName = 'Ratio') Then
+  If (Pos('mm', LPropName) > 0) OR (Trim(LPropName) = 'Tamanho') OR (LPropName = 'Módulo') OR (LPropName = 'Ratio') Then
   Begin
     LDecSep := DefaultFormatSettings.DecimalSeparator;
 
@@ -3112,12 +3191,10 @@ Begin
         LSG.Columns[1].PickList.Clear;
     End;
 
-    cbColorEditor0.Visible := False;
-
     // Configure editor based on property name
     If SameText(Trim(LPropName), 'Nome') Then
     Begin
-      // Se tiver indentaÃ§Ã£o, Ã© o Nome da Font
+      // Se tiver indentação, é o Nome da Font
       If Pos(sPropIndent, LPropName) > 0 Then
       Begin
         LSG.Columns[1].ButtonStyle := cbsPickList;
@@ -3125,7 +3202,7 @@ Begin
           LSG.Columns[1].PickList.Assign(Screen.Fonts);
       End;
     End
-    Else If SameText(Trim(LPropName), 'Negrito') OR SameText(Trim(LPropName), 'Sublinhado') OR SameText(Trim(LPropName), 'ItÃ¡lico') OR
+    Else If SameText(Trim(LPropName), 'Negrito') OR SameText(Trim(LPropName), 'Sublinhado') OR SameText(Trim(LPropName), 'Itálico') OR
       SameText(Trim(LPropName), 'Rasurado') Then
     Begin
       LSG.Columns[1].ButtonStyle := cbsPickList;
@@ -3175,7 +3252,7 @@ Begin
         LSG.Columns[1].PickList.Assign(Printer.PaperSize.SupportedPapers);
       End;
     End
-    Else If SameText(Trim(LPropName), 'OrientaÃ§Ã£o') Then
+    Else If SameText(Trim(LPropName), 'Orientação') Then
     Begin
       LSG.Columns[1].ButtonStyle := cbsPickList;
       If (LSG.Columns.Count > 1) AND Assigned(LSG.Columns[1].PickList) Then
@@ -3327,7 +3404,7 @@ Begin
   End;
 End;
 
-Procedure TfEtiqueta.cbColorEditor0Change(ASender: TObject);
+Procedure TfEtiqueta.cbColorEditorChange(ASender: TObject);
 Var
   LSG: TStringGrid;
 Begin
@@ -3343,7 +3420,7 @@ Begin
   If LSG.CanFocus Then LSG.SetFocus;
 End;
 
-Procedure TfEtiqueta.cbColorEditor0Exit(ASender: TObject);
+Procedure TfEtiqueta.cbColorEditorExit(ASender: TObject);
 Begin
   cbColorEditor0.Visible := False;
 End;
@@ -3375,6 +3452,8 @@ Begin
         If AValue <> LSettings.PrinterName Then
         Begin
           LSettings.PrinterName := AValue;
+          LSettings.PaperWidth := 0;
+          LSettings.PaperHeight := 0;
           Try
             Printer.SetPrinter(LSettings.PrinterName);
             LSettings.PaperName := Printer.PaperSize.PaperName;
@@ -3390,6 +3469,8 @@ Begin
         If AValue <> LSettings.PaperName Then
         Begin
           LSettings.PaperName := AValue;
+          LSettings.PaperWidth := 0;
+          LSettings.PaperHeight := 0;
           UpdateLabelSize;
           ShowLabelProperties;
         End;
@@ -3414,7 +3495,7 @@ Begin
         LSettings.Margins.Bottom := MmToPx(StrToFloatDef(AValue, PxToMm(LSettings.Margins.Bottom)));
         GetActivePaintBox.Invalidate;
       End
-      Else If LPropName = 'OrientaÃ§Ã£o' Then
+      Else If LPropName = 'Orientação' Then
       Begin
         If SameText(AValue, 'Portrait') Then
           LSettings.Orientation := poPortrait
@@ -3423,19 +3504,19 @@ Begin
         UpdateLabelSize;
         ShowLabelProperties;
       End
-      Else If SameText(Trim(LPropName), 'Colunas') Then LSettings.LayoutCols := StrToIntDef(AValue, 1)
-      Else If SameText(Trim(LPropName), 'Linhas') Then LSettings.LayoutRows := StrToIntDef(AValue, 1)
-      Else If SameText(Trim(LPropName), 'EspaÃ§o X (mm)') Then LSettings.LayoutGapX := MmToPx(StrToFloatDef(AValue, 0))
-      Else If SameText(Trim(LPropName), 'EspaÃ§o Y (mm)') Then LSettings.LayoutGapY := MmToPx(StrToFloatDef(AValue, 0))
+      Else If SameText(Trim(LPropName), 'Colunas') Then Begin LSettings.LayoutCols := StrToIntDef(AValue, 1); GetActivePaintBox.Invalidate; End
+      Else If SameText(Trim(LPropName), 'Linhas') Then Begin LSettings.LayoutRows := StrToIntDef(AValue, 1); GetActivePaintBox.Invalidate; End
+      Else If SameText(Trim(LPropName), 'Espaço X (mm)') Then Begin LSettings.LayoutGapX := MmToPx(StrToFloatDef(AValue, 0)); GetActivePaintBox.Invalidate; End
+      Else If SameText(Trim(LPropName), 'Espaço Y (mm)') Then Begin LSettings.LayoutGapY := MmToPx(StrToFloatDef(AValue, 0)); GetActivePaintBox.Invalidate; End
       Else If SameText(Trim(LPropName), 'Largura (mm)') Then
       Begin
-        GetActivePaintBox.Width := MmToPx(StrToFloatDef(AValue, PxToMm(GetActivePaintBox.Width)));
-        GetActivePaintBox.Invalidate;
+        LSettings.PaperWidth := MmToPx(StrToFloatDef(AValue, PxToMm(LSettings.PaperWidth)));
+        UpdateLabelSize;
       End
       Else If SameText(Trim(LPropName), 'Altura (mm)') Then
       Begin
-        GetActivePaintBox.Height := MmToPx(StrToFloatDef(AValue, PxToMm(GetActivePaintBox.Height)));
-        GetActivePaintBox.Invalidate;
+        LSettings.PaperHeight := MmToPx(StrToFloatDef(AValue, PxToMm(LSettings.PaperHeight)));
+        UpdateLabelSize;
       End;
       Exit;
     End;
@@ -3458,7 +3539,7 @@ Begin
           Begin
             If LabelManager.ExistsName(AValue, LItem) Then
             Begin
-              ShowMessage('JÃ¡ existe um objeto com o nome "' + AValue + '".');
+              ShowMessage('Já existe um objeto com o nome "' + AValue + '".');
               Exit;
             End;
             LItem.Name := AValue;
@@ -3474,7 +3555,7 @@ Begin
         Begin
           If LabelManager.ExistsName(AValue, LItem) Then
           Begin
-            ShowMessage('JÃ¡ existe um objeto com o nome "' + AValue + '".');
+            ShowMessage('Já existe um objeto com o nome "' + AValue + '".');
             Exit;
           End;
           LItem.Name := AValue;
@@ -3513,7 +3594,7 @@ Begin
             Else
               TLabelText(LItem).Font.Style := TLabelText(LItem).Font.Style - [fsUnderline];
           End
-          Else If SameText(Trim(LPropName), 'ItÃ¡lico') Then
+          Else If SameText(Trim(LPropName), 'Itálico') Then
           Begin
             If StrToBoolDef(AValue, False) Then TLabelText(LItem).Font.Style := TLabelText(LItem).Font.Style + [fsItalic]
             Else
@@ -3555,7 +3636,7 @@ Begin
           End
           Else If SameText(Trim(LPropName), 'Mostrar Texto') Then
             TLabelBarcode(LItem).ShowText := StrToBoolDef(AValue, TLabelBarcode(LItem).ShowText)
-          Else If SameText(Trim(LPropName), 'MÃ³dulo') Then
+          Else If SameText(Trim(LPropName), 'Módulo') Then
             TLabelBarcode(LItem).Module := StrToFloatDef(AValue, TLabelBarcode(LItem).Module)
           Else If SameText(Trim(LPropName), 'Ratio') Then
             TLabelBarcode(LItem).Ratio := StrToFloatDef(AValue, TLabelBarcode(LItem).Ratio);
@@ -3581,7 +3662,7 @@ Begin
               Begin
                 If LabelManager.ExistsName(AValue, LChildItem) Then
                 Begin
-                  ShowMessage('JÃ¡ existe um objeto com o nome "' + AValue + '".');
+                  ShowMessage('Já existe um objeto com o nome "' + AValue + '".');
                   Exit;
                 End;
                 LChildItem.Name := AValue;
@@ -3619,7 +3700,7 @@ Begin
                   Else
                     TLabelText(LChildItem).Font.Style := TLabelText(LChildItem).Font.Style - [fsUnderline];
                 End
-                Else If SameText(LPropName, 'ItÃ¡lico') Then
+                Else If SameText(LPropName, 'Itálico') Then
                 Begin
                   If StrToBoolDef(AValue, False) Then TLabelText(LChildItem).Font.Style := TLabelText(LChildItem).Font.Style + [fsItalic]
                   Else
@@ -3656,7 +3737,7 @@ Begin
                   Else If SameText(AValue, 'QR') Then TLabelBarcode(LChildItem).Kind := bkQR;
                 End
                 Else If SameText(LPropName, 'Mostrar Texto') Then TLabelBarcode(LChildItem).ShowText := StrToBoolDef(AValue, TLabelBarcode(LChildItem).ShowText)
-                Else If SameText(LPropName, 'MÃ³dulo') Then TLabelBarcode(LChildItem).Module := StrToFloatDef(AValue, TLabelBarcode(LChildItem).Module)
+                Else If SameText(LPropName, 'Módulo') Then TLabelBarcode(LChildItem).Module := StrToFloatDef(AValue, TLabelBarcode(LChildItem).Module)
                 Else If SameText(LPropName, 'Ratio') Then TLabelBarcode(LChildItem).Ratio := StrToFloatDef(AValue, TLabelBarcode(LChildItem).Ratio);
               End
               Else If LChildItem IS TLabelImage Then
@@ -3669,7 +3750,7 @@ Begin
             End;
           End;
 
-          // Propriedades da CÃ©lula (aplicar a todas as cÃ©lulas selecionadas)
+          // Propriedades da Célula (aplicar a todas as células selecionadas)
           If LGrid.GetSelectionCount > 0 Then
           Begin
             For Lr := 0 To LGrid.Rows - 1 Do
@@ -3765,7 +3846,7 @@ Begin
   Try
     LNode := nil;
 
-    // 1. Procurar por correspondÃªncia de ponteiro (Data)
+    // 1. Procurar por correspondência de ponteiro (Data)
     For i := 0 To LTV.Items.Count - 1 Do
     Begin
       If LTV.Items[i].Data = AItem Then
@@ -3775,7 +3856,7 @@ Begin
       End;
     End;
 
-    // 2. Salvaguarda: Procurar por nome se o ponteiro falhar (e AItem nÃ£o for nil)
+    // 2. Salvaguarda: Procurar por nome se o ponteiro falhar (e AItem não for nil)
     If (LNode = nil) AND (AItem <> nil) Then
     Begin
       For i := 0 To LTV.Items.Count - 1 Do
@@ -3790,11 +3871,11 @@ Begin
       End;
     End;
 
-    // 3. Se AItem for nil ou nÃ£o encontrado, selecionar a raiz "Etiqueta"
+    // 3. Se AItem for nil ou não encontrado, selecionar a raiz "Etiqueta"
     If (LNode = nil) AND (LTV.Items.Count > 0) Then
       LNode := LTV.Items[0];
 
-    // Aplicar seleÃ§Ã£o
+    // Aplicar seleção
     If Assigned(LNode) Then
     Begin
       LTV.Selected := LNode;
@@ -3819,15 +3900,16 @@ Var
   LTV: TTreeView;
 Begin
   If FUpdatingTree Then Exit;
+  If LabelManager = nil Then Exit;
   LTV := ASender AS TTreeView;
 
-  // 1. Limpar TODAS as seleÃ§Ãµes atuais (objetos e cÃ©lulas)
+  // 1. Limpar TODAS as seleções atuais (objetos e células)
   LabelManager.DeselectAll;
 
   // 2. Identificar o novo item selecionado
   If (LTV.Selected = nil) OR (LTV.Selected.Data = nil) Then
   Begin
-    // Selecionou a raiz "Etiqueta" ou nÃ³ invÃ¡lido
+    // Selecionou a raiz "Etiqueta" ou nó inválido
     FSelectedItem := nil;
     ShowLabelProperties;
   End
@@ -3840,7 +3922,7 @@ Begin
     UpdatePropertiesPanel(LItem);
   End;
 
-  // 3. ForÃ§ar redesenho do designer
+  // 3. Forçar redesenho do designer
   GetActivePaintBox.Invalidate;
 End;
 
@@ -4290,7 +4372,7 @@ Var
   LSettings: TTabSettings;
 Begin
   LTab := pcEtiquetas.ActivePage;
-  If (LTab = nil) OR (LTab = tsMais) OR (LTab = tsEtiqueta0) Then Exit;
+  If (LTab = nil) OR (LTab = tsMais) Then Exit;
 
   If MessageDlg('Confirmar', 'Deseja eliminar esta etiqueta?', mtConfirmation, [mbYes, mbNo], 0) = mrYes Then
   Begin
@@ -4375,7 +4457,7 @@ Begin
 
   LfE := TfEtiqueta(FOwner);
 
-  // Preservar posiÃ§Ã£o do cursor se estivermos a editar a linha de filtros
+  // Preservar posição do cursor se estivermos a editar a linha de filtros
   LSelStart := -1;
   LEditor := nil;
   If (FGrid.Row = 1) AND Assigned(FGrid.Editor) AND (FGrid.Editor IS TCustomEdit) Then
@@ -4402,12 +4484,12 @@ Begin
 
           FGrid.ColCount := FHeaders.Count + 1;
 
-          // CabeÃ§alho da coluna de Checkbox
-          FGrid.Cells[0, 0] := 'âœ…';
+          // Cabeçalho da coluna de Checkbox
+          FGrid.Cells[0, 0] := '✅';
           FGrid.Cells[0, 1] := '0';
           FGrid.ColWidths[0] := iCheckColWidth;
 
-          // Restaurar cabeÃ§alhos de dados
+          // Restaurar cabeçalhos de dados
           For Lc := 0 To FHeaders.Count - 1 Do
             FGrid.Cells[Lc + 1, 0] := FHeaders[Lc];
 
@@ -4435,7 +4517,7 @@ Begin
       For Lc := 0 To LRowData.Count - 1 Do
         LRowKey := LRowKey + LRowData[Lc] + '|';
 
-      // Inserir '1' se estava marcada, '0' caso contrÃ¡rio
+      // Inserir '1' se estava marcada, '0' caso contrário
       If FCheckedKeys.IndexOf(LRowKey) >= 0 Then
         LRowData.Insert(0, '1')
       Else
@@ -4462,6 +4544,7 @@ Begin
       Begin
         FGrid.AutoSizeColumns;
         FGrid.ColWidths[0] := 20;
+        FGrid.AjustarLarguraAoLimite;
         TfEtiqueta(FOwner).FDataLoadedOnce := True;
       End;
 
@@ -4474,7 +4557,7 @@ Begin
   Finally
     FGrid.EndUpdate;
 
-    // Restaurar posiÃ§Ã£o do cursor
+    // Restaurar posição do cursor
     If (LSelStart >= 0) AND Assigned(LEditor) Then
     Begin
       LEditor.SelStart := LSelStart;
@@ -4646,7 +4729,7 @@ Begin
 
                     If LWhere <> '' Then LWhere := LWhere + ' AND ';
 
-                    // Pesquisa parcial case-insensitive com wildcards automÃ¡ticos
+                    // Pesquisa parcial case-insensitive com wildcards automáticos
                     LFilterVal := UpperCase(FFilters.ValueFromIndex[Li]);
                     If Pos('%', LFilterVal) = 0 Then
                       LFilterVal := '%' + LFilterVal + '%';
@@ -4713,3 +4796,4 @@ Begin
 End;
 
 End.
+

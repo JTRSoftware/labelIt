@@ -8,7 +8,7 @@ Uses
   //LabelIt
   uLabelObjects,
   //Lazarus
-  Classes, SysUtils, Forms, Graphics, Dialogs;
+  Classes, SysUtils, Forms, Graphics, Dialogs, System.UITypes;
 
 Type
   TTamanho = Record

@@ -16,7 +16,8 @@ Uses
   uLabelIt,
   uLabelObjects,
   uPrinting,
-  uDadosExternos { you can add units after this };
+  uDadosExternos,
+  uGridHelpers;
 
   {$R *.res}
 

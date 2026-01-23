@@ -8,7 +8,7 @@
       <Unit>
         <Filename Value="LabelIt.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="8"/>
         <CursorPos Y="34"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
@@ -20,7 +20,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <TopLine Value="67"/>
-        <CursorPos X="15" Y="92"/>
+        <CursorPos X="35" Y="73"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -31,29 +31,26 @@
         <ComponentName Value="fEtiqueta"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="320"/>
-        <CursorPos X="4" Y="314"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="2052"/>
+        <CursorPos X="84" Y="2070"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="uLabelIt.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="152"/>
-        <CursorPos Y="175"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="191"/>
+        <CursorPos X="57" Y="219"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="uLabelObjects.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="350"/>
         <CursorPos X="8" Y="376"/>
         <UsageCount Value="201"/>
@@ -62,8 +59,7 @@
       <Unit>
         <Filename Value="uPrinting.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="3"/>
+        <EditorIndex Value="7"/>
         <CursorPos X="5" Y="33"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
@@ -74,12 +70,23 @@
         <ComponentName Value="fDadosExternos"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="172"/>
         <CursorPos X="55" Y="188"/>
-        <UsageCount Value="138"/>
+        <UsageCount Value="151"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uGridHelpers.pas"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="11"/>
+        <CursorPos X="88" Y="38"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
         <Filename Value="C:\APPS\lazarus\lcl\graphics.pp"/>
@@ -87,37 +94,21 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1323"/>
         <CursorPos X="14" Y="1338"/>
-        <UsageCount Value="24"/>
+        <UsageCount Value="23"/>
       </Unit>
       <Unit>
         <Filename Value="C:\APPS\lazarus\fpc\3.2.2\source\rtl\objpas\sysutils\sysutilh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="237"/>
         <CursorPos X="14" Y="252"/>
-        <UsageCount Value="9"/>
-      </Unit>
-      <Unit>
-        <Filename Value="uEtiqueta.lfm"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="430"/>
-        <CursorPos X="54" Y="442"/>
-        <UsageCount Value="1"/>
-        <DefaultSyntaxHighlighter Value="LFM"/>
-      </Unit>
-      <Unit>
-        <Filename Value="uDadosExternos.lfm"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="108"/>
-        <CursorPos X="13" Y="139"/>
-        <UsageCount Value="1"/>
-        <DefaultSyntaxHighlighter Value="LFM"/>
+        <UsageCount Value="8"/>
       </Unit>
       <Unit>
         <Filename Value="C:\APPS\lazarus\fpc\3.2.2\source\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="784"/>
         <CursorPos X="14" Y="791"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit>
       <Unit>
         <Filename Value="C:\APPS\lazarus\lcl\comctrls.pp"/>
@@ -125,85 +116,42 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="596"/>
         <CursorPos X="14" Y="611"/>
-        <UsageCount Value="2"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\Users\tomas.PRORURAL\AppData\Local\lazarus\onlinepackagemanager\packages\FPSpreadsheet\source\common\fpspreadsheet.pas"/>
-        <UnitName Value="fpSpreadsheet"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="833"/>
-        <CursorPos X="23" Y="836"/>
         <UsageCount Value="1"/>
       </Unit>
       <Unit>
         <Filename Value="C:\APPS\lazarus\lcl\grids.pas"/>
         <UnitName Value="Grids"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="1322"/>
-        <CursorPos X="15" Y="1335"/>
-        <UsageCount Value="1"/>
+        <TopLine Value="1782"/>
+        <CursorPos X="15" Y="1804"/>
+        <UsageCount Value="10"/>
       </Unit>
       <Unit>
         <Filename Value="uMain.lfm"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="12" Y="40"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\APPS\lazarus\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="460"/>
+        <CursorPos X="3" Y="482"/>
+        <UsageCount Value="16"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\APPS\lazarus\fpc\3.2.2\source\packages\rtl-objpas\src\inc\system.uitypes.pp"/>
+        <UnitName Value="System.UITypes"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="193"/>
+        <CursorPos X="3" Y="214"/>
+        <UsageCount Value="9"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="2074" Column="121" TopLine="2074"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="2085" Column="7" TopLine="2074"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="2078" Column="3" TopLine="2056"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="2071" Column="101" TopLine="2056"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="477" Column="35" TopLine="456"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="527" Column="14" TopLine="506"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="589" Column="14" TopLine="568"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="3310" Column="16" TopLine="3289"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="111" Column="15" TopLine="90"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="3310" Column="16" TopLine="3289"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="111" Column="15" TopLine="90"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="3310" Column="16" TopLine="3289"/>
-      </Position>
-      <Position>
-        <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="2183" Column="3" TopLine="2178"/>
-      </Position>
       <Position>
         <Filename Value="uEtiqueta.pas"/>
         <Caret Line="206" Column="17" TopLine="186"/>
@@ -269,8 +217,60 @@
         <Caret Line="282" Column="31" TopLine="278"/>
       </Position>
       <Position>
+        <Filename Value="uLabelIt.pas"/>
+        <Caret Line="175" TopLine="152"/>
+      </Position>
+      <Position>
+        <Filename Value="uMain.pas"/>
+        <Caret Line="92" Column="27" TopLine="67"/>
+      </Position>
+      <Position>
+        <Filename Value="uLabelIt.pas"/>
+        <Caret Line="206" Column="56" TopLine="194"/>
+      </Position>
+      <Position>
+        <Filename Value="uLabelIt.pas"/>
+        <Caret Line="219" Column="57" TopLine="191"/>
+      </Position>
+      <Position>
+        <Filename Value="uMain.pas"/>
+        <Caret Line="92" Column="40" TopLine="67"/>
+      </Position>
+      <Position>
         <Filename Value="uEtiqueta.pas"/>
-        <Caret Line="314" Column="4" TopLine="320"/>
+        <Caret Line="314" Column="4" TopLine="314"/>
+      </Position>
+      <Position>
+        <Filename Value="uEtiqueta.pas"/>
+        <Caret Line="125" Column="77" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="uEtiqueta.pas"/>
+        <Caret Line="3097" TopLine="3076"/>
+      </Position>
+      <Position>
+        <Filename Value="uEtiqueta.pas"/>
+        <Caret Line="1202" Column="98" TopLine="1187"/>
+      </Position>
+      <Position>
+        <Filename Value="uEtiqueta.pas"/>
+        <Caret Line="131" Column="17" TopLine="110"/>
+      </Position>
+      <Position>
+        <Filename Value="uEtiqueta.pas"/>
+        <Caret Line="264" Column="23" TopLine="242"/>
+      </Position>
+      <Position>
+        <Filename Value="uEtiqueta.pas"/>
+        <Caret Line="2074" Column="24" TopLine="2052"/>
+      </Position>
+      <Position>
+        <Filename Value="uEtiqueta.pas"/>
+        <Caret Line="2070" Column="84" TopLine="2052"/>
+      </Position>
+      <Position>
+        <Filename Value="uGridHelpers.pas"/>
+        <Caret Line="38" Column="25" TopLine="8"/>
       </Position>
     </JumpHistory>
     <RunParams>
