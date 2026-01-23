@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Lazarus](https://img.shields.io/badge/Lazarus-Free_Pascal-blue.svg)](https://www.lazarus-ide.org/)
+[![Antigravity](https://img.shields.io/badge/Google_Antigravity-Partner-darkblue.svg)](https://antigravity.google/)
 
 > *"It's simple to look complicated; the complicated thing is to look simple."*
 
@@ -63,3 +64,4 @@ This project is licensed under the MIT License - see the `LICENSE` file for more
 <p align="center">
   Developed with ❤️ by José Tomás Rodrigues
 </p>
+
