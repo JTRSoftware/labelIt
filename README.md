@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Lazarus](https://img.shields.io/badge/Lazarus-Free_Pascal-blue.svg)](https://www.lazarus-ide.org/)
+[![Antigravity](https://img.shields.io/badge/antigravity-enabled-brightgreen.svg)](https://antigravity.google/)
 
 > *"É simples parecer complicado, o complicado é parecer simples."*
 
